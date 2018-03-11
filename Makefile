@@ -16,7 +16,7 @@ LIBNAME=-lGLEW -framework OpenGL\
 INCLUDES=-I/usr/local/include
 
 #my compiler options
-CFLAGS=-c -Wall
+CFLAGS=-c -Wall -std=c++14
 
 all: main.o
 	$(CC) $(LIBDIR) $(LIBNAME) -o $(PRGNAME) main.o
