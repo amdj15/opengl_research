@@ -9,8 +9,9 @@ LIBDIR=-L/usr/local
 
 #library names
 #uses libSDL2.a, libGLEW.a
-LIBNAME=-lGLEW -framework OpenGL\
-				-lsfml-graphics -lsfml-window -lsfml-system
+LIBNAME=-lGLEW -lglfw3 -framework Cocoa -framework OpenGL -framework IOKit -framework CoreVideo
+
+#-lsfml-graphics -lsfml-window -lsfml-system
 
 #includes for libraries
 INCLUDES=-I/usr/local/include
