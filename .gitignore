@@ -1,2 +1,3 @@
-booom
+.DS_Store
 *.o
+/bin

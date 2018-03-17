@@ -11,20 +11,22 @@ LIBDIR=-L/usr/local
 #uses libSDL2.a, libGLEW.a
 LIBNAME=-lGLEW -lglfw3 -framework Cocoa -framework OpenGL -framework IOKit -framework CoreVideo
 
-#-lsfml-graphics -lsfml-window -lsfml-system
-
 #includes for libraries
 INCLUDES=-I/usr/local/include
 
 #my compiler options
 CFLAGS=-c -Wall -std=c++14
 
-all: main.o
-	$(CC) $(LIBDIR) $(LIBNAME) -o $(PRGNAME) main.o
+DIST=./bin
 
-#main.cpp is the dependency of main.o
-main.o: main.cpp
-	$(CC) $(CFLAGS) $(INCLUDES) main.cpp
+FILES=*.cpp
+
+all: compile
+	mkdir -p $(DIST)
+	$(CC) $(LIBDIR) $(LIBNAME) -o $(DIST)/$(PRGNAME) *.o
+
+compile:
+	$(CC) $(CFLAGS) $(INCLUDES) src/$(FILES)
 
 clean:
-	rm -rf *o booom
+	rm -rf *.o $(DIST)

@@ -3,30 +3,31 @@
 
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
+#include "gl_debug.h"
 
 static unsigned int compileShader(unsigned int type, const std::string& source) {
   unsigned int id = glCreateShader(type);
   const char* src = source.c_str();
 
-  glShaderSource(id, 1, &src, nullptr);
-  glCompileShader(id);
+  GLCall(glShaderSource(id, 1, &src, nullptr));
+  GLCall(glCompileShader(id));
 
   int compileStatus;
-  glGetShaderiv(id, GL_COMPILE_STATUS, &compileStatus);
+  GLCall(glGetShaderiv(id, GL_COMPILE_STATUS, &compileStatus));
 
   if (compileStatus == GL_FALSE) {
     int logLength;
-    glGetShaderiv(id, GL_INFO_LOG_LENGTH, &logLength);
+    GLCall(glGetShaderiv(id, GL_INFO_LOG_LENGTH, &logLength));
 
     char message[logLength];
     std::string textType = (type == GL_VERTEX_SHADER) ? "vertex" : "fragment";
 
-    glGetShaderInfoLog(id, logLength, &logLength, message);
+    GLCall(glGetShaderInfoLog(id, logLength, &logLength, message));
 
     std::cout << "Failed to compile " << textType << std::endl;
     std::cout << message << std::endl;
 
-    glDeleteShader(id);
+    GLCall(glDeleteShader(id));
 
     return 0;
   }
@@ -39,14 +40,14 @@ static unsigned int createShaders(const std::string& vertexShader, const std::st
   unsigned int vs = compileShader(GL_VERTEX_SHADER, vertexShader);
   unsigned int fs = compileShader(GL_FRAGMENT_SHADER, fragmentShader);
 
-  glAttachShader(program, vs);
-  glAttachShader(program, fs);
+  GLCall(glAttachShader(program, vs));
+  GLCall(glAttachShader(program, fs));
 
-  glLinkProgram(program);
-  glValidateProgram(program);
+  GLCall(glLinkProgram(program));
+  GLCall(glValidateProgram(program));
 
-  glDeleteShader(vs);
-  glDeleteShader(fs);
+  GLCall(glDeleteShader(vs));
+  GLCall(glDeleteShader(fs));
 
   return program;
 }
@@ -109,7 +110,7 @@ int main() {
   std::cout << "Renderer: " << glGetString(GL_RENDERER) << std::endl;
 
   unsigned int shaders = createShaders(vertexShaderSrc, fragmentShaderSrc);
-  glUseProgram(shaders);
+  GLCall(glUseProgram(shaders));
 
   float positions[] = {
     0.0f,  0.5f, // Vertex 1 (X, Y)
@@ -120,24 +121,24 @@ int main() {
   unsigned int buffer;
   unsigned int gVAO;
 
-  glGenBuffers(1, &buffer);
+  GLCall(glGenBuffers(1, &buffer));
 
-  glBindBuffer(GL_ARRAY_BUFFER, buffer);
-  glBufferData(GL_ARRAY_BUFFER, sizeof(positions), positions, GL_STATIC_DRAW);
+  GLCall(glBindBuffer(GL_ARRAY_BUFFER, buffer));
+  GLCall(glBufferData(GL_ARRAY_BUFFER, sizeof(positions), positions, GL_STATIC_DRAW));
 
   // make and bind the VAO
-  glGenVertexArrays(1, &gVAO);
-  glBindVertexArray(gVAO);
+  GLCall(glGenVertexArrays(1, &gVAO));
+  GLCall(glBindVertexArray(gVAO));
 
-  glEnableVertexAttribArray(0);
-  glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, 0);
+  GLCall(glEnableVertexAttribArray(0));
+  GLCall(glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, 0));
 
   /* Loop until the user closes the window */
   while (!glfwWindowShouldClose(window))
   {
     /* Render here */
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    glDrawArrays(GL_TRIANGLES, 0, 3);
+    GLCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
+    GLCall(glDrawArrays(GL_TRIANGLES, 0, 3));
 
     /* Swap front and back buffers */
     glfwSwapBuffers(window);
