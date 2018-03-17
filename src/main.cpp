@@ -1,8 +1,10 @@
 #include <iostream>
-#define GLEW_STATIC
+#include <fstream>
+#include <sstream>
 
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
+
 #include "gl_debug.h"
 
 static unsigned int compileShader(unsigned int type, const std::string& source) {
@@ -52,27 +54,19 @@ static unsigned int createShaders(const std::string& vertexShader, const std::st
   return program;
 }
 
-static const std::string vertexShaderSrc = R"glsl(
-  #version 410
+static std::string loadShader(const std::string& filepath) {
+  std::ifstream file;
+  file.open(filepath);
 
-  in vec2 position;
-
-  void main()
-  {
-    gl_Position = vec4(position, 0.0, 1.0);
+  if (!file.is_open()) {
+    throw std::runtime_error(std::string("Failed to open file: ") + filepath);
   }
-)glsl";
 
-static const std::string fragmentShaderSrc = R"glsl(
-  #version 410
+  std::stringstream buffer;
+  buffer << file.rdbuf();
 
-  out vec4 outColor;
-
-  void main()
-  {
-    outColor = vec4(0.4, 0.3, 0.1, 1.0);
-  }
-)glsl";
+  return buffer.str();
+}
 
 int main() {
   GLFWwindow* window;
@@ -89,8 +83,7 @@ int main() {
 
   /* Create a windowed mode window and its OpenGL context */
   window = glfwCreateWindow(640, 480, "OpenGL", NULL, NULL);
-  if (!window)
-  {
+  if (!window) {
     glfwTerminate();
     return -1;
   }
@@ -98,7 +91,6 @@ int main() {
   /* Make the window's context current */
   glfwMakeContextCurrent(window);
 
-  // glewExperimental = GL_TRUE;
   if (glewInit() != GLEW_OK) {
     std::cout << "Oh crap!" << std::endl;
     return 1;
@@ -108,6 +100,9 @@ int main() {
   std::cout << "GLSL version: " << glGetString(GL_SHADING_LANGUAGE_VERSION) << std::endl;
   std::cout << "Vendor: " << glGetString(GL_VENDOR) << std::endl;
   std::cout << "Renderer: " << glGetString(GL_RENDERER) << std::endl;
+
+  std::string vertexShaderSrc = loadShader("./shaders/vertex.glsl");
+  std::string fragmentShaderSrc = loadShader("./shaders/fragment.glsl");
 
   unsigned int shaders = createShaders(vertexShaderSrc, fragmentShaderSrc);
   GLCall(glUseProgram(shaders));
@@ -134,8 +129,7 @@ int main() {
   GLCall(glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, 0));
 
   /* Loop until the user closes the window */
-  while (!glfwWindowShouldClose(window))
-  {
+  while (!glfwWindowShouldClose(window)) {
     /* Render here */
     GLCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
     GLCall(glDrawArrays(GL_TRIANGLES, 0, 3));

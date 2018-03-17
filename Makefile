@@ -17,16 +17,18 @@ INCLUDES=-I/usr/local/include
 #my compiler options
 CFLAGS=-c -Wall -std=c++14
 
-DIST=./bin
+DEFINE=GLEW_STATIC
 
+DIST=./bin
 FILES=*.cpp
 
 all: compile
 	mkdir -p $(DIST)
+	cp -a resources/. $(DIST)/
 	$(CC) $(LIBDIR) $(LIBNAME) -o $(DIST)/$(PRGNAME) *.o
 
 compile:
-	$(CC) $(CFLAGS) $(INCLUDES) src/$(FILES)
+	$(CC) $(CFLAGS) $(INCLUDES) -D $(DEFINE) src/$(FILES)
 
 clean:
 	rm -rf *.o $(DIST)
