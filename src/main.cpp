@@ -8,7 +8,7 @@
 #include "gl_debug.h"
 
 static unsigned int compileShader(unsigned int type, const std::string& source) {
-  unsigned int id = glCreateShader(type);
+  GLCall(unsigned int id = glCreateShader(type));
   const char* src = source.c_str();
 
   GLCall(glShaderSource(id, 1, &src, nullptr));
@@ -90,6 +90,7 @@ int main() {
 
   /* Make the window's context current */
   glfwMakeContextCurrent(window);
+  glfwSwapInterval(1);
 
   if (glewInit() != GLEW_OK) {
     std::cout << "Oh crap!" << std::endl;
@@ -108,22 +109,34 @@ int main() {
   GLCall(glUseProgram(shaders));
 
   float positions[] = {
-    0.0f,  0.5f, // Vertex 1 (X, Y)
-    0.5f, -0.5f, // Vertex 2 (X, Y)
-    -0.5f, -0.5f // Vertex 3 (X, Y)
+    -0.5f, -0.5f,
+     0.5f, -0.5f,
+     0.5f,  0.5f,
+    -0.5f,  0.5f
+  };
+
+  unsigned int indexes[] = {
+    0, 1, 2,
+    2, 3, 0
   };
 
   unsigned int buffer;
   unsigned int gVAO;
-
-  GLCall(glGenBuffers(1, &buffer));
-
-  GLCall(glBindBuffer(GL_ARRAY_BUFFER, buffer));
-  GLCall(glBufferData(GL_ARRAY_BUFFER, sizeof(positions), positions, GL_STATIC_DRAW));
+  unsigned int indexBufferObject;
 
   // make and bind the VAO
   GLCall(glGenVertexArrays(1, &gVAO));
   GLCall(glBindVertexArray(gVAO));
+
+  // vertex buffer object
+  GLCall(glGenBuffers(1, &buffer));
+  GLCall(glBindBuffer(GL_ARRAY_BUFFER, buffer));
+  GLCall(glBufferData(GL_ARRAY_BUFFER, sizeof(positions), positions, GL_STATIC_DRAW));
+
+  // index buffer
+  GLCall(glGenBuffers(1, &indexBufferObject));
+  GLCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBufferObject));
+  GLCall(glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indexes), indexes, GL_STATIC_DRAW));
 
   GLCall(glEnableVertexAttribArray(0));
   GLCall(glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, 0));
@@ -132,7 +145,8 @@ int main() {
   while (!glfwWindowShouldClose(window)) {
     /* Render here */
     GLCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
-    GLCall(glDrawArrays(GL_TRIANGLES, 0, 3));
+    // GLCall(glDrawArrays(GL_TRIANGLES, 0, 3));
+    GLCall(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr));
 
     /* Swap front and back buffers */
     glfwSwapBuffers(window);

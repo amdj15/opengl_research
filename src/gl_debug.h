@@ -1,8 +1,9 @@
 #include <csignal>
 
-#define ASSERT(x) if ((x)) std::raise(SIGINT);
+#define ASSERT(x) if ((x)) std::raise(SIGINT)
 
-#define GLCall(func) GLCleanError(); \
+#define GLCall(func) \
+  GLCleanError(); \
   func;\
   ASSERT(GLLogError(#func, __FILE__, __LINE__))
 
