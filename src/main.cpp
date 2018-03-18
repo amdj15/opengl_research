@@ -76,8 +76,8 @@ int main() {
     return -1;
   }
 
-  glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
-  glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
+  glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+  glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
   glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE); // To make MacOS happy; should not be needed
   glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE); // We don't want the old OpenGL
 
@@ -89,6 +89,7 @@ int main() {
   }
 
   /* Make the window's context current */
+
   glfwMakeContextCurrent(window);
   glfwSwapInterval(1);
 
@@ -107,6 +108,7 @@ int main() {
 
   unsigned int shaders = createShaders(vertexShaderSrc, fragmentShaderSrc);
   GLCall(glUseProgram(shaders));
+  GLCall(unsigned int colorLocation = glGetUniformLocation(shaders, "u_Color"));
 
   float positions[] = {
     -0.5f, -0.5f,
@@ -141,12 +143,24 @@ int main() {
   GLCall(glEnableVertexAttribArray(0));
   GLCall(glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, 0));
 
+  float red = 0.0f;
+  float increment = 0.5f;
+
   /* Loop until the user closes the window */
   while (!glfwWindowShouldClose(window)) {
     /* Render here */
     GLCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
-    // GLCall(glDrawArrays(GL_TRIANGLES, 0, 3));
+
+    GLCall(glUniform4f(colorLocation, red, 0.4f, 0.7f, 1.0f));
     GLCall(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr));
+
+    if (red > 1.0f) {
+      increment = -0.05f;
+    } else if (red < 0) {
+      increment = 0.05f;
+    }
+
+    red += increment;
 
     /* Swap front and back buffers */
     glfwSwapBuffers(window);
