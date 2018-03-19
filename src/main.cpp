@@ -5,7 +5,9 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
-#include "gl_debug.h"
+#include "renderer.h"
+#include "vertex_buffer.h"
+#include "index_buffer.h"
 
 static unsigned int compileShader(unsigned int type, const std::string& source) {
   GLCall(unsigned int id = glCreateShader(type));
@@ -89,7 +91,6 @@ int main() {
   }
 
   /* Make the window's context current */
-
   glfwMakeContextCurrent(window);
   glfwSwapInterval(1);
 
@@ -122,23 +123,16 @@ int main() {
     2, 3, 0
   };
 
-  unsigned int buffer;
-  unsigned int gVAO;
-  unsigned int indexBufferObject;
-
   // make and bind the VAO
+  unsigned int gVAO;
   GLCall(glGenVertexArrays(1, &gVAO));
   GLCall(glBindVertexArray(gVAO));
 
   // vertex buffer object
-  GLCall(glGenBuffers(1, &buffer));
-  GLCall(glBindBuffer(GL_ARRAY_BUFFER, buffer));
-  GLCall(glBufferData(GL_ARRAY_BUFFER, sizeof(positions), positions, GL_STATIC_DRAW));
+  VertexBuffer vbo(positions, sizeof(positions));
 
   // index buffer
-  GLCall(glGenBuffers(1, &indexBufferObject));
-  GLCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBufferObject));
-  GLCall(glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indexes), indexes, GL_STATIC_DRAW));
+  IndexBuffer ibo(indexes, 6);
 
   GLCall(glEnableVertexAttribArray(0));
   GLCall(glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, 0));

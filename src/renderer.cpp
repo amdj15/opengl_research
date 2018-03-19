@@ -1,6 +1,7 @@
 #include <iostream>
 #include <GL/glew.h>
-#include "gl_debug.h"
+
+#include "renderer.h"
 
 void GLCleanError() {
   while(glGetError() != GL_NO_ERROR);

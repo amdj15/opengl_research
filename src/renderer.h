@@ -1,3 +1,4 @@
+#pragma once
 #include <csignal>
 
 #define ASSERT(x) if ((x)) std::raise(SIGINT)
