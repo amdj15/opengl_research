@@ -78,7 +78,9 @@ int main() {
   shaders.attach(&vertexShader);
   shaders.attach(&fragmentShader);
 
-  shaders.bind();
+  // shaders.bind();
+
+  Renderer renderer;
 
   float red = 0.0f;
   float increment = 0.5f;
@@ -88,11 +90,10 @@ int main() {
     /* Render here */
     GLCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
 
+    shaders.bind();
     shaders.setUniform4f("u_Color", red, 0.4f, 0.7f, 1.0f);
 
-    ibo.bind();
-
-    GLCall(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr));
+    renderer.draw(vao, ibo, shaders);
 
     if (red > 1.0f) {
       increment = -0.05f;
