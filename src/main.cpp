@@ -9,6 +9,7 @@
 #include "vertex_array.h"
 #include "shader_program.h"
 #include "shader.h"
+#include "texture.h"
 
 int main() {
   GLFWwindow* window;
@@ -45,10 +46,10 @@ int main() {
   std::cout << "Renderer: " << glGetString(GL_RENDERER) << std::endl;
 
   float positions[] = {
-    -0.5f, -0.5f,
-     0.5f, -0.5f,
-     0.5f,  0.5f,
-    -0.5f,  0.5f
+    -0.5f, -0.5f, 0.0f, 0.0f,
+     0.5f, -0.5f, 1.0f, 0.0f,
+     0.5f,  0.5f, 1.0f, 1.0f,
+    -0.5f,  0.5f, 0.0f, 1.0f
   };
 
   unsigned int indexes[] = {
@@ -66,9 +67,13 @@ int main() {
   IndexBuffer ibo(indexes, 6);
 
   VertexBufferLayout layout;
-  layout.push(2);
+  layout.push(2); // push vertex coord layout
+  layout.push(2); // push textrurs coord layout
 
   vao.addBuffer(vbo, layout);
+
+  Texture texture("./textures/wall.png");
+  texture.bind();
 
   Shader vertexShader("./shaders/vertex.glsl", GL_VERTEX_SHADER);
   Shader fragmentShader("./shaders/fragment.glsl", GL_FRAGMENT_SHADER);
@@ -78,19 +83,19 @@ int main() {
   shaders.attach(&vertexShader);
   shaders.attach(&fragmentShader);
 
-  // shaders.bind();
+  shaders.bind();
+  shaders.setUniform1i("u_Texture", 0); // 0 - slot binded in texture
 
   Renderer renderer;
 
   float red = 0.0f;
-  float increment = 0.5f;
+  float increment = 0.05f;
 
   /* Loop until the user closes the window */
   while (!glfwWindowShouldClose(window)) {
     /* Render here */
-    GLCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
+    renderer.clear();
 
-    shaders.bind();
     shaders.setUniform4f("u_Color", red, 0.4f, 0.7f, 1.0f);
 
     renderer.draw(vao, ibo, shaders);

@@ -23,3 +23,7 @@ void Renderer::draw(const VertexArray &vao, const IndexBuffer &ibo, const Shader
 
   GLCall(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr));
 }
+
+void Renderer::clear() const {
+  GLCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
+}

@@ -9,11 +9,11 @@ PRGNAME=booom
 LIBNAME=-lGLEW -lglfw3 -framework Cocoa -framework OpenGL -framework IOKit -framework CoreVideo
 
 # includes for libraries
-# INCLUDES=-I/usr/local/include
+INCLUDES=-I vendors
 
 CFLAGS=-c -Wall -std=c++14
 
-DEFINE=GLEW_STATIC
+DEFINE=-D GLEW_STATIC -D STB_IMAGE_IMPLEMENTATION
 
 DIST=./bin
 FILES=*.cpp
@@ -24,7 +24,7 @@ all: compile
 	$(CC)  $(LIBNAME) -o $(DIST)/$(PRGNAME) *.o
 
 compile:
-	$(CC) $(CFLAGS) -D $(DEFINE) src/$(FILES)
+	$(CC) $(CFLAGS) $(INCLUDES)  $(DEFINE) src/$(FILES)
 
 clean:
 	rm -rf *.o $(DIST)

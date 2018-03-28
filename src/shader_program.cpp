@@ -34,7 +34,10 @@ void ShaderProgram::setUniform4f(const std::string& name, float v1, float v2, fl
   GLCall(glUniform4f(location, v1, v2, v3, v4));
 }
 
+void ShaderProgram::setUniform1i(const std::string& name, int value) {
+  GLCall(glUniform1i(getUniformLocation(name), value));
+}
+
 int ShaderProgram::getUniformLocation(const std::string& name) {
   GLCall(return glGetUniformLocation(m_RendererId, name.c_str()));
 }
-
