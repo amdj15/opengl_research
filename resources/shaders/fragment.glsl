@@ -4,9 +4,11 @@ out vec4 outColor;
 in vec2 v_TexCoords;
 
 uniform vec4 u_Color;
-uniform sampler2D u_Texture;
+
+uniform sampler2D u_TextureBg;
+uniform sampler2D u_TextureTag;
 
 void main()
 {
-  outColor = texture(u_Texture, v_TexCoords) * u_Color;
+  outColor = mix(texture(u_TextureBg, v_TexCoords), texture(u_TextureTag, v_TexCoords), 0.3) * u_Color;
 }

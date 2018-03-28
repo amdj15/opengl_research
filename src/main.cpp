@@ -57,6 +57,9 @@ int main() {
     2, 3, 0
   };
 
+  GLCall(glEnable(GL_BLEND));
+  GLCall(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
+
   // make and bind the VAO
   VertexArray vao;
 
@@ -72,9 +75,6 @@ int main() {
 
   vao.addBuffer(vbo, layout);
 
-  Texture texture("./textures/wall.png");
-  texture.bind();
-
   Shader vertexShader("./shaders/vertex.glsl", GL_VERTEX_SHADER);
   Shader fragmentShader("./shaders/fragment.glsl", GL_FRAGMENT_SHADER);
 
@@ -84,7 +84,9 @@ int main() {
   shaders.attach(&fragmentShader);
 
   shaders.bind();
-  shaders.setUniform1i("u_Texture", 0); // 0 - slot binded in texture
+
+  Texture textureBg("./textures/wall.png");
+  Texture textureTag("./textures/tag.png");
 
   Renderer renderer;
 
@@ -95,6 +97,12 @@ int main() {
   while (!glfwWindowShouldClose(window)) {
     /* Render here */
     renderer.clear();
+
+    textureBg.bind(0);
+    shaders.setUniform1i("u_TextureBg", 0); // 0 - slot binded in texture
+
+    textureTag.bind(1);
+    shaders.setUniform1i("u_TextureTag", 1); // 1 - slot binded in texture
 
     shaders.setUniform4f("u_Color", red, 0.4f, 0.7f, 1.0f);
 
