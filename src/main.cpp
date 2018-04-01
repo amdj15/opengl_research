@@ -3,6 +3,10 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
+
 #include "renderer.h"
 #include "vertex_buffer.h"
 #include "index_buffer.h"
@@ -97,6 +101,14 @@ int main() {
   while (!glfwWindowShouldClose(window)) {
     /* Render here */
     renderer.clear();
+
+    float time = (float)glfwGetTime();
+
+    glm::mat4 trans(1.0f);
+    trans = glm::rotate(trans, time, glm::vec3(0.0f, 0.0f, 1.0f));
+    shaders.setUniformMatrix4fv("transform", glm::value_ptr(trans));
+
+    std::cout << time << std::endl;
 
     textureBg.bind(0);
     shaders.setUniform1i("u_TextureBg", 0); // 0 - slot binded in texture
