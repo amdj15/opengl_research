@@ -15,6 +15,9 @@
 #include "shader.h"
 #include "texture.h"
 
+const unsigned int SCREEN_WIDTH = 800;
+const unsigned int SCREEN_HEIGHT = 600;
+
 int main() {
   GLFWwindow* window;
 
@@ -29,7 +32,7 @@ int main() {
   glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE); // We don't want the old OpenGL
 
   /* Create a windowed mode window and its OpenGL context */
-  window = glfwCreateWindow(640, 480, "OpenGL", NULL, NULL);
+  window = glfwCreateWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "OpenGL", NULL, NULL);
   if (!window) {
     glfwTerminate();
     return -1;
@@ -50,10 +53,10 @@ int main() {
   std::cout << "Renderer: " << glGetString(GL_RENDERER) << std::endl;
 
   float positions[] = {
-    -0.5f, -0.5f, 0.0f, 0.0f,
-     0.5f, -0.5f, 1.0f, 0.0f,
-     0.5f,  0.5f, 1.0f, 1.0f,
-    -0.5f,  0.5f, 0.0f, 1.0f
+    -0.5f, -0.5f, 0.0f, 0.0f, 0.0f,
+     0.5f, -0.5f, 0.0f, 1.0f, 0.0f,
+     0.5f,  0.5f, 0.0f, 1.0f, 1.0f,
+    -0.5f,  0.5f, 0.0f, 0.0f, 1.0f
   };
 
   unsigned int indexes[] = {
@@ -74,7 +77,7 @@ int main() {
   IndexBuffer ibo(indexes, 6);
 
   VertexBufferLayout layout;
-  layout.push(2); // push vertex coord layout
+  layout.push(3); // push vertex coord layout
   layout.push(2); // push textrurs coord layout
 
   vao.addBuffer(vbo, layout);
@@ -94,6 +97,14 @@ int main() {
 
   Renderer renderer;
 
+  glm::mat4 model = glm::rotate(glm::mat4(1.0f), glm::radians(-60.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+  glm::mat4 view = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, -2.5f));
+  glm::mat4 projection = glm::perspective(glm::radians(45.0f), (float)SCREEN_WIDTH / (float)SCREEN_HEIGHT, 0.1f, 100.0f);
+
+  shaders.setUniformMatrix4fv("model", glm::value_ptr(model));
+  shaders.setUniformMatrix4fv("view", glm::value_ptr(view));
+  shaders.setUniformMatrix4fv("projection", glm::value_ptr(projection));
+
   float red = 0.0f;
   float increment = 0.05f;
 
@@ -102,21 +113,13 @@ int main() {
     /* Render here */
     renderer.clear();
 
-    float time = (float)glfwGetTime();
-
-    glm::mat4 trans(1.0f);
-    trans = glm::rotate(trans, time, glm::vec3(0.0f, 0.0f, 1.0f));
-    shaders.setUniformMatrix4fv("transform", glm::value_ptr(trans));
-
-    std::cout << time << std::endl;
-
     textureBg.bind(0);
     shaders.setUniform1i("u_TextureBg", 0); // 0 - slot binded in texture
 
     textureTag.bind(1);
     shaders.setUniform1i("u_TextureTag", 1); // 1 - slot binded in texture
 
-    shaders.setUniform4f("u_Color", red, 0.4f, 0.7f, 1.0f);
+    // shaders.setUniform4f("u_Color", red, 0.4f, 0.7f, 1.0f);
 
     renderer.draw(vao, ibo, shaders);
 

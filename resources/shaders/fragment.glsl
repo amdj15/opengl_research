@@ -10,5 +10,5 @@ uniform sampler2D u_TextureTag;
 
 void main()
 {
-  outColor = mix(texture(u_TextureBg, v_TexCoords), texture(u_TextureTag, v_TexCoords), 0.3) * u_Color;
+  outColor = mix(texture(u_TextureBg, v_TexCoords), texture(u_TextureTag, v_TexCoords), 0.5);
 }
