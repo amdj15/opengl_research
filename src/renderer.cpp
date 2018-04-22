@@ -21,7 +21,7 @@ void Renderer::draw(const VertexArray &vao, const IndexBuffer &ibo, const Shader
   vao.bind();
   ibo.bind();
 
-  GLCall(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr));
+  GLCall(glDrawElements(GL_TRIANGLES, ibo.getCount(), GL_UNSIGNED_INT, nullptr));
 }
 
 void Renderer::clear() const {
