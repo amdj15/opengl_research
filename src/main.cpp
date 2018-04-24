@@ -136,8 +136,18 @@ int main() {
 
   Renderer renderer;
 
-  float red = 0.0f;
-  float increment = 0.05f;
+  glm::vec3 cubePositions[] = {
+    glm::vec3( 0.0f,  0.0f,  0.0f),
+    glm::vec3( 2.0f,  5.0f, -15.0f),
+    glm::vec3(-1.5f, -2.2f, -2.5f),
+    glm::vec3(-3.8f, -2.0f, -12.3f),
+    glm::vec3( 2.4f, -0.4f, -3.5f),
+    glm::vec3(-1.7f,  3.0f, -7.5f),
+    glm::vec3( 1.3f, -2.0f, -2.5f),
+    glm::vec3( 1.5f,  2.0f, -2.5f),
+    glm::vec3( 1.5f,  0.2f, -1.5f),
+    glm::vec3(-1.3f,  1.0f, -1.5f)
+  };
 
   /* Loop until the user closes the window */
   while (!glfwWindowShouldClose(window)) {
@@ -150,25 +160,20 @@ int main() {
     textureTag.bind(1);
     shaders.setUniform1i("u_TextureTag", 1); // 1 - slot binded in texture
 
-    glm::mat4 model = glm::rotate(glm::mat4(1.0f), (float)glfwGetTime(), glm::vec3(0.5f, 1.0f, 0.0f));
-    glm::mat4 view = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, -2.5f));
+    glm::mat4 view = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, -7.5f));
     glm::mat4 projection = glm::perspective(glm::radians(45.0f), (float)SCREEN_WIDTH / (float)SCREEN_HEIGHT, 0.1f, 100.0f);
 
-    shaders.setUniformMatrix4fv("model", glm::value_ptr(model));
-    shaders.setUniformMatrix4fv("view", glm::value_ptr(view));
     shaders.setUniformMatrix4fv("projection", glm::value_ptr(projection));
 
-    shaders.setUniform4f("u_Color", red, 0.4f, 0.7f, 1.0f);
+    for (int i = 0; i < 10; i++) {
+      glm::mat4 model = glm::translate(glm::mat4(1.0f), cubePositions[i]);
+      view = glm::rotate(view, (float)glfwGetTime() / 10, glm::vec3(-0.5f, 1.0f, 0.0f));
 
-    renderer.draw(vao, ibo, shaders);
+      shaders.setUniformMatrix4fv("view", glm::value_ptr(view));
+      shaders.setUniformMatrix4fv("model", glm::value_ptr(model));
 
-    if (red > 1.0f) {
-      increment = -0.05f;
-    } else if (red < 0) {
-      increment = 0.05f;
+      renderer.draw(vao, ibo, shaders);
     }
-
-    red += increment;
 
     /* Swap front and back buffers */
     glfwSwapBuffers(window);
