@@ -1,12 +1,12 @@
 #include <iostream>
 
 #include <GL/glew.h>
-#include <GLFW/glfw3.h>
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
+#include "window.h"
 #include "renderer.h"
 #include "vertex_buffer.h"
 #include "index_buffer.h"
@@ -15,43 +15,7 @@
 #include "shader.h"
 #include "texture.h"
 
-const unsigned int SCREEN_WIDTH = 800;
-const unsigned int SCREEN_HEIGHT = 600;
-
 int main() {
-  GLFWwindow* window;
-
-  /* Initialize the library */
-  if (!glfwInit()) {
-    return -1;
-  }
-
-  glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-  glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-  glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE); // To make MacOS happy; should not be needed
-  glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE); // We don't want the old OpenGL
-
-  /* Create a windowed mode window and its OpenGL context */
-  window = glfwCreateWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "OpenGL", NULL, NULL);
-  if (!window) {
-    glfwTerminate();
-    return -1;
-  }
-
-  /* Make the window's context current */
-  glfwMakeContextCurrent(window);
-  glfwSwapInterval(1);
-
-  if (glewInit() != GLEW_OK) {
-    std::cout << "Oh crap!" << std::endl;
-    return 1;
-  }
-
-  std::cout << "OpenGL version: " << glGetString(GL_VERSION) << std::endl;
-  std::cout << "GLSL version: " << glGetString(GL_SHADING_LANGUAGE_VERSION) << std::endl;
-  std::cout << "Vendor: " << glGetString(GL_VENDOR) << std::endl;
-  std::cout << "Renderer: " << glGetString(GL_RENDERER) << std::endl;
-
   float positions[] = {
     -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,  // A 0
     0.5f, -0.5f, -0.5f,  1.0f, 0.0f,  // B 1
@@ -102,6 +66,8 @@ int main() {
     22, 23, 20
   };
 
+  Window window(800, 600, "Cubes");
+
   GLCall(glEnable(GL_BLEND));
   GLCall(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
   GLCall(glEnable(GL_DEPTH_TEST));
@@ -150,7 +116,7 @@ int main() {
   };
 
   /* Loop until the user closes the window */
-  while (!glfwWindowShouldClose(window)) {
+  while (window.isOpen()) {
     /* Render here */
     renderer.clear();
 
@@ -160,14 +126,16 @@ int main() {
     textureTag.bind(1);
     shaders.setUniform1i("u_TextureTag", 1); // 1 - slot binded in texture
 
-    glm::mat4 view = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, -7.5f));
-    glm::mat4 projection = glm::perspective(glm::radians(45.0f), (float)SCREEN_WIDTH / (float)SCREEN_HEIGHT, 0.1f, 100.0f);
+    glm::mat4 view = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, -3.0f));
+    glm::mat4 projection = glm::perspective(glm::radians(45.0f), window.getWidth() / window.getHeight(), 0.1f, 100.0f);
 
     shaders.setUniformMatrix4fv("projection", glm::value_ptr(projection));
 
     for (int i = 0; i < 10; i++) {
       glm::mat4 model = glm::translate(glm::mat4(1.0f), cubePositions[i]);
-      view = glm::rotate(view, (float)glfwGetTime() / 10, glm::vec3(-0.5f, 1.0f, 0.0f));
+      model = glm::rotate(model, (float)(i * 15), glm::vec3(-0.5f, 1.0f, 0.0f));
+
+      // view = glm::rotate(view, (float)glfwGetTime() / 10, glm::vec3(-0.5f, 1.0f, 0.0f));
 
       shaders.setUniformMatrix4fv("view", glm::value_ptr(view));
       shaders.setUniformMatrix4fv("model", glm::value_ptr(model));
@@ -176,12 +144,11 @@ int main() {
     }
 
     /* Swap front and back buffers */
-    glfwSwapBuffers(window);
+    window.swapBuffers();
 
     /* Poll for and process events */
-    glfwPollEvents();
+    window.pollEvents();
   }
 
-  glfwTerminate();
   return 0;
 }
