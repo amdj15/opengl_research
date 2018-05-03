@@ -25,4 +25,8 @@ class Window {
     inline const float getHeight() const {
       return (float)m_Height;
     }
+
+    inline GLFWwindow* getGlfwWindow() const {
+      return m_Window;
+    }
 };

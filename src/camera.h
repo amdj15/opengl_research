@@ -10,4 +10,9 @@ class Camera {
     Camera();
     ~Camera();
     glm::mat4 getViewMatrix() const;
+
+    void forward(float offset);
+    void backward(float offset);
+    void left(float offset);
+    void right(float offset);
 };

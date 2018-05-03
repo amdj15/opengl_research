@@ -11,3 +11,20 @@ Camera::~Camera() {}
 glm::mat4 Camera::getViewMatrix() const {
   return glm::lookAt(m_Position, m_Position + m_ViewDirection, m_Up);
 }
+
+void Camera::forward(float offset) {
+  m_Position += offset * m_ViewDirection;
+}
+
+void Camera::backward(float offset) {
+  m_Position -= offset * m_ViewDirection;
+}
+
+void Camera::left(float offset) {
+  m_Position -= glm::normalize(glm::cross(m_ViewDirection, m_Up)) * offset;
+}
+
+void Camera::right(float offset) {
+  m_Position += glm::normalize(glm::cross(m_ViewDirection, m_Up)) * offset;
+}
+

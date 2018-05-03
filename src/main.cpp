@@ -14,6 +14,9 @@
 #include "shader_program.h"
 #include "shader.h"
 #include "texture.h"
+#include "camera.h"
+
+void processInput(GLFWwindow* window, Camera &camera);
 
 int main() {
   float positions[] = {
@@ -66,6 +69,7 @@ int main() {
     22, 23, 20
   };
 
+  // TODO: check intitialization errors
   Window window(800, 600, "Cubes");
 
   GLCall(glEnable(GL_BLEND));
@@ -102,6 +106,8 @@ int main() {
 
   Renderer renderer;
 
+  Camera camera;
+
   glm::vec3 cubePositions[] = {
     glm::vec3( 0.0f,  0.0f,  0.0f),
     glm::vec3( 2.0f,  5.0f, -15.0f),
@@ -126,18 +132,20 @@ int main() {
     textureTag.bind(1);
     shaders.setUniform1i("u_TextureTag", 1); // 1 - slot binded in texture
 
-    glm::mat4 view = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, -3.0f));
+    processInput(window.getGlfwWindow(), camera);
+
+    glm::mat4 view = camera.getViewMatrix();
     glm::mat4 projection = glm::perspective(glm::radians(45.0f), window.getWidth() / window.getHeight(), 0.1f, 100.0f);
 
     shaders.setUniformMatrix4fv("projection", glm::value_ptr(projection));
+    shaders.setUniformMatrix4fv("view", glm::value_ptr(view));
 
     for (int i = 0; i < 10; i++) {
       glm::mat4 model = glm::translate(glm::mat4(1.0f), cubePositions[i]);
-      model = glm::rotate(model, (float)(i * 15), glm::vec3(-0.5f, 1.0f, 0.0f));
 
-      // view = glm::rotate(view, (float)glfwGetTime() / 10, glm::vec3(-0.5f, 1.0f, 0.0f));
+      float angle = (i % 3 == 0) ? glfwGetTime() * 25.0f * (i + 1) : 20.0f * i;
+      model = glm::rotate(model, glm::radians(angle), glm::vec3(-0.5f, 1.0f, 0.0f));
 
-      shaders.setUniformMatrix4fv("view", glm::value_ptr(view));
       shaders.setUniformMatrix4fv("model", glm::value_ptr(model));
 
       renderer.draw(vao, ibo, shaders);
@@ -151,4 +159,24 @@ int main() {
   }
 
   return 0;
+}
+
+void processInput(GLFWwindow* window, Camera &camera) {
+  float offset = 0.05f;
+
+  if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
+    camera.forward(offset);
+  }
+
+  if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
+    camera.backward(offset);
+  }
+
+  if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
+    camera.left(offset);
+  }
+
+  if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
+    camera.right(offset);
+  }
 }
