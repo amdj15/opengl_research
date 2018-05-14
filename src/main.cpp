@@ -1,7 +1,5 @@
 #include <iostream>
-
 #include <GL/glew.h>
-
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
@@ -16,7 +14,17 @@
 #include "texture.h"
 #include "camera.h"
 
-void processInput(GLFWwindow* window, Camera &camera);
+static void processInput(GLFWwindow* window, Camera &camera, float deltaTime);
+static void mouseCallback(GLFWwindow* window, double xpos, double ypos);
+
+struct MousePositions {
+  double lastX;
+  double lastY;
+  bool isFirstMouse;
+};
+
+MousePositions mousePositions;
+Camera camera;
 
 int main() {
   float positions[] = {
@@ -70,7 +78,12 @@ int main() {
   };
 
   // TODO: check intitialization errors
-  Window window(800, 600, "Cubes");
+  Window window(1100, 900, "Cubes");
+  glfwSetCursorPosCallback(window.getGlfwWindow(), mouseCallback);
+
+  mousePositions.lastX = window.getWidth() / 2.0f;
+  mousePositions.lastY = window.getHeight() / 2.0f;
+  mousePositions.isFirstMouse = true;
 
   GLCall(glEnable(GL_BLEND));
   GLCall(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
@@ -106,8 +119,6 @@ int main() {
 
   Renderer renderer;
 
-  Camera camera;
-
   glm::vec3 cubePositions[] = {
     glm::vec3( 0.0f,  0.0f,  0.0f),
     glm::vec3( 2.0f,  5.0f, -15.0f),
@@ -121,8 +132,15 @@ int main() {
     glm::vec3(-1.3f,  1.0f, -1.5f)
   };
 
+  float lastTime = 0.0f;
+  float deltaTime = 0.0f;
+
   /* Loop until the user closes the window */
   while (window.isOpen()) {
+    float currentTime = glfwGetTime();
+    deltaTime = currentTime - lastTime;
+    lastTime = currentTime;
+
     /* Render here */
     renderer.clear();
 
@@ -132,7 +150,7 @@ int main() {
     textureTag.bind(1);
     shaders.setUniform1i("u_TextureTag", 1); // 1 - slot binded in texture
 
-    processInput(window.getGlfwWindow(), camera);
+    processInput(window.getGlfwWindow(), camera, deltaTime);
 
     glm::mat4 view = camera.getViewMatrix();
     glm::mat4 projection = glm::perspective(glm::radians(45.0f), window.getWidth() / window.getHeight(), 0.1f, 100.0f);
@@ -161,8 +179,26 @@ int main() {
   return 0;
 }
 
-void processInput(GLFWwindow* window, Camera &camera) {
-  float offset = 0.05f;
+static void mouseCallback(GLFWwindow* window, double xpos, double ypos) {
+  if (mousePositions.isFirstMouse) {
+    mousePositions.lastX = xpos;
+    mousePositions.lastY = ypos;
+    mousePositions.isFirstMouse = false;
+  }
+
+  float xoffset = xpos - mousePositions.lastX;
+  float yoffset = ypos - mousePositions.lastY;
+
+  mousePositions.lastX = xpos;
+  mousePositions.lastY = ypos;
+
+  std::cout << "x, y offsetts: " << xoffset << ", " << yoffset << std::endl;
+
+  camera.processMouseMovement(xoffset, yoffset);
+}
+
+static void processInput(GLFWwindow* window, Camera &camera, float deltaTime) {
+  float offset = 2.5f * deltaTime;
 
   if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
     camera.forward(offset);
