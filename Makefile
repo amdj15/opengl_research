@@ -3,10 +3,11 @@ CC=clang++
 PRGNAME=booom
 
 # library search directory
-# LIBDIR=-L/usr/local
+LIBDIR=-L vendors/libs
 
 # library names
-LIBNAME=-lGLEW -lglfw3 -framework Cocoa -framework OpenGL -framework IOKit -framework CoreVideo
+LIBNAME=-lGLEW -lglfw3 \
+				-framework Cocoa -framework OpenGL -framework IOKit -framework CoreVideo
 
 # includes for libraries
 INCLUDES=-I vendors
@@ -21,10 +22,10 @@ FILES=*.cpp
 all: compile
 	mkdir -p $(DIST)
 	cp -a resources/. $(DIST)/
-	$(CC)  $(LIBNAME) -o $(DIST)/$(PRGNAME) *.o
+	$(CC) $(LIBNAME) $(LIBDIR) -o $(DIST)/$(PRGNAME) *.o
 
 compile:
-	$(CC) $(CFLAGS) $(INCLUDES)  $(DEFINE) src/$(FILES)
+	$(CC) $(CFLAGS) $(INCLUDES) $(DEFINE) src/$(FILES)
 
 clean:
 	rm -rf *.o $(DIST)
