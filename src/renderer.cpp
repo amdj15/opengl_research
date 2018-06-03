@@ -20,6 +20,7 @@ bool GLLogError(const char* func, const char* file, int line) {
 void Renderer::draw(const VertexArray &vao, const IndexBuffer &ibo, const ShaderProgram &sh) const {
   vao.bind();
   ibo.bind();
+  sh.bind();
 
   GLCall(glDrawElements(GL_TRIANGLES, ibo.getCount(), GL_UNSIGNED_INT, nullptr));
 }

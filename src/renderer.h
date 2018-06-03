@@ -1,4 +1,5 @@
 #pragma once
+
 #include <csignal>
 #include "vertex_array.h"
 #include "index_buffer.h"

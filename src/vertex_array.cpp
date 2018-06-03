@@ -3,13 +3,14 @@
 #include "renderer.h"
 #include "vertex_array.h"
 #include "vertex_buffer_layout.h"
+#include <iostream>
 
 VertexArray::VertexArray() {
   GLCall(glGenVertexArrays(1, &m_RendererId));
 }
 
 VertexArray::~VertexArray() {
-  GLCall(glDeleteVertexArrays(1, &m_RendererId));
+  // GLCall(glDeleteVertexArrays(1, &m_RendererId));
 }
 
 void VertexArray::addBuffer(const VertexBuffer& vbo, const VertexBufferLayout& layout) {

@@ -10,6 +10,6 @@ uniform sampler2D u_TextureTag;
 
 void main()
 {
-  // outColor = u_Color;
-  outColor = mix(texture(u_TextureBg, v_TexCoords), texture(u_TextureTag, v_TexCoords), 0.6);
+  outColor = vec4(0.1, 0.3, 0.7, 1.0);
+  // outColor = mix(texture(u_TextureBg, v_TexCoords), texture(u_TextureTag, v_TexCoords), 0.6);
 }

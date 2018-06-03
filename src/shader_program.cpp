@@ -14,18 +14,21 @@ void ShaderProgram::attach(const Shader *shader) {
   GLCall(glAttachShader(m_RendererId, shader->getId()));
 
   // TODO: research delete shader after attach
-  // GLCall(glDeleteShader(vs));
+  // GLCall(glDeleteShader(shader->getId()));
   // GLCall(glDeleteShader(fs));
 }
 
 void ShaderProgram::bind() const {
-  GLCall(glLinkProgram(m_RendererId));
-  GLCall(glValidateProgram(m_RendererId));
   GLCall(glUseProgram(m_RendererId));
 }
 
 void ShaderProgram::unbind() const {
   GLCall(glUseProgram(0));
+}
+
+void ShaderProgram::link() const {
+  GLCall(glLinkProgram(m_RendererId));
+  GLCall(glValidateProgram(m_RendererId));
 }
 
 void ShaderProgram::setUniform4f(const std::string& name, float v1, float v2, float v3, float v4) {
