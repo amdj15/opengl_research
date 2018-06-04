@@ -13,4 +13,8 @@ class VertexArray {
     void addBuffer(const VertexBuffer& vbo, const VertexBufferLayout& layout);
     void bind() const;
     void unbind() const;
+
+    inline unsigned int getRendererId() const {
+      return m_RendererId;
+    }
 };

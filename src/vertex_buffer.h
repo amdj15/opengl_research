@@ -9,4 +9,8 @@ class VertexBuffer {
 
     void bind() const;
     void unbind() const;
+
+    inline unsigned int getRendererId() const {
+      return m_RendererId;
+    }
 };

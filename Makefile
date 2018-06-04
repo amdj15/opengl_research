@@ -6,7 +6,7 @@ PRGNAME=booom
 LIBDIR=-L vendors/libs
 
 # library names
-LIBNAME=-lGLEW -lglfw3 \
+LIBNAME=-lGLEW -lglfw3 -lassimp -lirrxml -lzlibstatic \
 				-framework Cocoa -framework OpenGL -framework IOKit -framework CoreVideo
 
 # includes for libraries
