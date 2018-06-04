@@ -12,7 +12,7 @@ Model::Model(const std::string pathToFile): m_PathToFile(pathToFile) {
 
 void Model::Load() {
   Assimp::Importer importer;
-  const aiScene* scene = importer.ReadFile(m_PathToFile, aiProcess_Triangulate);
+  const aiScene* scene = importer.ReadFile(m_PathToFile, aiProcess_Triangulate | aiProcess_FlipUVs);
 
   if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) {
     std::cout << "ERROR::ASSIMP::" << importer.GetErrorString() << std::endl;
@@ -41,13 +41,27 @@ Mesh Model::processMesh(const aiMesh* mesh) {
 
   for (unsigned int i = 0; i < mesh->mNumVertices; i++) {
     Vertex vertex;
-    glm::vec3 position;
 
+    glm::vec3 position;
     position.x = mesh->mVertices[i].x;
     position.y = mesh->mVertices[i].y;
     position.z = mesh->mVertices[i].z;
-
     vertex.Position = position;
+
+    glm::vec3 normal;
+    normal.x = mesh->mNormals[i].x;
+    normal.y = mesh->mNormals[i].y;
+    normal.z = mesh->mNormals[i].z;
+    vertex.Normal = normal;
+
+    if (mesh->mTextureCoords[0]) {
+      glm::vec2 vec;
+      vec.x = mesh->mTextureCoords[0][i].x;
+      vec.y = mesh->mTextureCoords[0][i].y;
+      vertex.TexCoords = vec;
+    } else {
+      vertex.TexCoords = glm::vec2(0.0f, 0.0f);
+    }
 
     vertices.push_back(vertex);
   }

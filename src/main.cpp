@@ -72,12 +72,15 @@ int main() {
 
     glm::mat4 view = camera.getViewMatrix();
     glm::mat4 projection = glm::perspective(glm::radians(45.0f), window.getWidth() / window.getHeight(), 1.0f, 1000.0f);
-    glm::mat4 model = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 0.0f));
-
-    glm::mat4 mvp = projection * view * model;
+    glm::mat4 model = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, -10.0f, -15.0f));
+    model = glm::rotate(model, glm::radians(currentTime * 25), glm::vec3(0.0f, 1.0f, 0.0f));
 
     shaders.bind();
-    shaders.setUniformMatrix4fv("mvp", glm::value_ptr(mvp));
+    shaders.setUniformMatrix4fv("u_Model", glm::value_ptr(model));
+    shaders.setUniformMatrix4fv("u_View", glm::value_ptr(view));
+    shaders.setUniformMatrix4fv("u_Projection", glm::value_ptr(projection));
+    shaders.setUniform3f("u_LightPosition", -20.0f, 100.0f, 50.0f);
+    shaders.setUniform3f("u_LightColor", 1.0f, 1.0f, 1.0f);
     shaders.unbind();
 
     for(unsigned int i = 0; i < cube.getMeshes().size(); i++) {
@@ -113,7 +116,7 @@ static void mouseCallback(GLFWwindow* window, double xpos, double ypos) {
 }
 
 static void processInput(GLFWwindow* window, Camera &camera, float deltaTime) {
-  float offset = 2.5f * deltaTime;
+  float offset = 5.0f * deltaTime;
 
   if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
     camera.forward(offset);

@@ -16,6 +16,7 @@ class ShaderProgram {
     void unbind() const;
     void link() const;
     void setUniform4f(const std::string& name, float v1, float v2, float v3, float v4);
+    void setUniform3f(const std::string& name, float v1, float v2, float v3);
     void setUniformMatrix4fv(const std::string& name, float *matrix_ptr);
     void setUniform1i(const std::string& name, int value);
 

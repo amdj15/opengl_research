@@ -20,12 +20,21 @@ void Mesh::setupMesh() {
     vertexesData.push_back(m_Vertices[i].Position.x);
     vertexesData.push_back(m_Vertices[i].Position.y);
     vertexesData.push_back(m_Vertices[i].Position.z);
+
+    vertexesData.push_back(m_Vertices[i].Normal.x);
+    vertexesData.push_back(m_Vertices[i].Normal.y);
+    vertexesData.push_back(m_Vertices[i].Normal.z);
+
+    vertexesData.push_back(m_Vertices[i].TexCoords.x);
+    vertexesData.push_back(m_Vertices[i].TexCoords.y);
   }
 
   VertexBuffer vbo(&vertexesData[0], sizeof(float) * vertexesData.size());
 
   VertexBufferLayout layout;
   layout.push(3);
+  layout.push(3);
+  layout.push(2);
 
   m_VAO.addBuffer(vbo, layout);
 

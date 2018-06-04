@@ -37,6 +37,10 @@ void ShaderProgram::setUniform4f(const std::string& name, float v1, float v2, fl
   GLCall(glUniform4f(location, v1, v2, v3, v4));
 }
 
+void ShaderProgram::setUniform3f(const std::string& name, float v1, float v2, float v3) {
+  GLCall(glUniform3f(getUniformLocation(name), v1, v2, v3));
+}
+
 void ShaderProgram::setUniformMatrix4fv(const std::string& name, float *matrix_ptr) {
   int location = getUniformLocation(name);
   GLCall(glUniformMatrix4fv(location, 1, GL_FALSE, matrix_ptr));
