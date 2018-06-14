@@ -1,12 +1,15 @@
 #include <GL/glew.h>
 #include "shader_program.h"
 #include "renderer.h"
+#include "iostream"
 
 ShaderProgram::ShaderProgram() {
   GLCall(m_RendererId = glCreateProgram());
 }
 
 ShaderProgram::~ShaderProgram() {
+  std::cout << "Delete shader porogram: " << m_RendererId << std::endl;
+
   GLCall(glDeleteProgram(m_RendererId));
 }
 
@@ -38,7 +41,19 @@ void ShaderProgram::setUniform4f(const std::string& name, float v1, float v2, fl
 }
 
 void ShaderProgram::setUniform3f(const std::string& name, float v1, float v2, float v3) {
-  GLCall(glUniform3f(getUniformLocation(name), v1, v2, v3));
+  int location = getUniformLocation(name);
+
+  if (location > -1) {
+    GLCall(glUniform3f(location, v1, v2, v3));
+  }
+}
+
+void ShaderProgram::setUniform1f(const std::string& name, float v1) {
+  int location = getUniformLocation(name);
+
+  if (location > -1) {
+    GLCall(glUniform1f(location, v1));
+  }
 }
 
 void ShaderProgram::setUniformMatrix4fv(const std::string& name, float *matrix_ptr) {

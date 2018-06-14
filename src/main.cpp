@@ -3,6 +3,7 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#include <math.h>
 
 #include "window.h"
 #include "renderer.h"
@@ -17,6 +18,8 @@
 
 static void processInput(GLFWwindow* window, Camera &camera, float deltaTime);
 static void mouseCallback(GLFWwindow* window, double xpos, double ypos);
+static ShaderProgram* loadShader(const std::string &name);
+static glm::vec3 rotateAroundPoint(float angle, float radius, const glm::vec3 &position);
 
 struct MousePositions {
   double lastX;
@@ -40,15 +43,6 @@ int main() {
   GLCall(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
   GLCall(glEnable(GL_DEPTH_TEST));
 
-  Shader vertexShader("./shaders/vertex.glsl", GL_VERTEX_SHADER);
-  Shader fragmentShader("./shaders/fragment.glsl", GL_FRAGMENT_SHADER);
-
-  ShaderProgram shaders;
-
-  shaders.attach(&vertexShader);
-  shaders.attach(&fragmentShader);
-  shaders.link();
-
   Renderer renderer;
 
   float lastTime = 0.0f;
@@ -56,6 +50,27 @@ int main() {
 
   Model cube("./stanford-dragon.obj");
   cube.Load();
+
+  Model sphere("./sphere.obj");
+  sphere.Load();
+
+  Model models[] = {
+    cube,
+    sphere,
+  };
+
+  ShaderProgram* shaders[] = {
+    loadShader("model"),
+    loadShader("light_source"),
+  };
+
+  glm::vec3 lightPosition = glm::vec3(0.0f, 0.0f, -15.0f);
+  glm::vec3 lightColor = glm::vec3(1.0f, 1.0f, 1.0f);
+
+  glm::vec3 positions[] = {
+    glm::vec3(0.0f, -10.0f, -15.0f),
+    lightPosition,
+  };
 
   /* Loop until the user closes the window */
   while (window.isOpen()) {
@@ -72,19 +87,33 @@ int main() {
 
     glm::mat4 view = camera.getViewMatrix();
     glm::mat4 projection = glm::perspective(glm::radians(45.0f), window.getWidth() / window.getHeight(), 1.0f, 1000.0f);
-    glm::mat4 model = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, -10.0f, -15.0f));
-    model = glm::rotate(model, glm::radians(currentTime * 25), glm::vec3(0.0f, 1.0f, 0.0f));
 
-    shaders.bind();
-    shaders.setUniformMatrix4fv("u_Model", glm::value_ptr(model));
-    shaders.setUniformMatrix4fv("u_View", glm::value_ptr(view));
-    shaders.setUniformMatrix4fv("u_Projection", glm::value_ptr(projection));
-    shaders.setUniform3f("u_LightPosition", -20.0f, 100.0f, 50.0f);
-    shaders.setUniform3f("u_LightColor", 1.0f, 1.0f, 1.0f);
-    shaders.unbind();
+    for (unsigned i = 0; i < 2; i++) {
+      Model model = models[i];
+      ShaderProgram* shaderPr = shaders[i];
 
-    for(unsigned int i = 0; i < cube.getMeshes().size(); i++) {
-      renderer.draw(cube.getMeshes()[i].GetVao(), cube.getMeshes()[i].GetIbo(), shaders);
+      glm::vec3 position;
+
+      if (i == 1) {
+        position = rotateAroundPoint(currentTime, 15, positions[i]);
+        lightPosition = position;
+      } else {
+        position = positions[i];
+      }
+
+      glm::mat4 modelMat = glm::translate(glm::mat4(1.0f), position);
+
+      shaderPr->bind();
+      shaderPr->setUniformMatrix4fv("u_View", glm::value_ptr(view));
+      shaderPr->setUniformMatrix4fv("u_Projection", glm::value_ptr(projection));
+      shaderPr->setUniformMatrix4fv("u_Model", glm::value_ptr(modelMat));
+
+      shaderPr->setUniform3f("u_LightPosition", lightPosition.x, lightPosition.y, lightPosition.z);
+      shaderPr->setUniform3f("u_LightColor", lightColor.x, lightColor.y, lightColor.z);
+
+      for(unsigned int j = 0; j < model.getMeshes().size(); j++) {
+        renderer.draw(model.getMeshes()[j].GetVao(), model.getMeshes()[j].GetIbo(), *shaderPr);
+      }
     }
 
     /* Swap front and back buffers */
@@ -94,7 +123,34 @@ int main() {
     window.pollEvents();
   }
 
+  for (int i = 0; i < 2; i++) {
+    delete shaders[i];
+  }
+
   return 0;
+}
+
+static glm::vec3 rotateAroundPoint(float angle, float radius, const glm::vec3 &position) {
+  glm::vec3 result(1.0f, 1.0f, 1.0f);
+
+  result.x = position.x + cos(angle) * radius;
+  result.y = position.y;
+  result.z = position.z + sin(angle) * radius;
+
+  return result;
+}
+
+static ShaderProgram* loadShader(const std::string &name) {
+  Shader modelVertexShader("./shaders/" + name + "_vertex.glsl", GL_VERTEX_SHADER);
+  Shader modelFragmentShader("./shaders/" + name + "_fragment.glsl", GL_FRAGMENT_SHADER);
+
+  ShaderProgram *modelShaders = new ShaderProgram();
+
+  modelShaders->attach(&modelVertexShader);
+  modelShaders->attach(&modelFragmentShader);
+  modelShaders->link();
+
+  return modelShaders;
 }
 
 static void mouseCallback(GLFWwindow* window, double xpos, double ypos) {
