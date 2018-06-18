@@ -14,15 +14,21 @@ uniform sampler2D u_TextureTag;
 
 void main()
 {
+  vec3 color = vec3(0.4, 0.1, 0.7);
+
   vec3 unitNormal = normalize(v_SurfaceNormal);
   vec3 unitLightVector = normalize(v_ToLightVector);
 
+  // ambient light
+  float ambientStength = 0.1f;
+  vec3 ambientLight = u_LightColor * ambientStength;
+
+  // diffused light
   float dotProduct = dot(unitNormal, unitLightVector);
   float brightness = max(dotProduct, 0.0f);
 
-  vec3 diffuse = brightness * u_LightColor;
+  vec3 diffuseLight = brightness * u_LightColor;
 
-  outColor = vec4(diffuse, 1.0f) * vec4(0.4, 0.1, 0.7, 1.0);
-
-  // outColor = mix(texture(u_TextureBg, v_TexCoords), texture(u_TextureTag, v_TexCoords), 0.6);
+  vec3 resultColor = (ambientLight + diffuseLight) * color;
+  outColor = vec4(resultColor, 1.0f);
 }
