@@ -48,28 +48,42 @@ int main() {
   float lastTime = 0.0f;
   float deltaTime = 0.0f;
 
-  Model cube("./stanford-dragon.obj");
+  Model cube("./cube.obj");
   cube.Load();
 
   Model sphere("./sphere.obj");
   sphere.Load();
 
+  Model dragon("./dragon.obj");
+  dragon.Load();
+
   Model models[] = {
-    cube,
     sphere,
+    dragon,
+    cube,
   };
 
+  ShaderProgram *modelShader = loadShader("model");
+
   ShaderProgram* shaders[] = {
-    loadShader("model"),
     loadShader("light_source"),
+    modelShader,
+    modelShader,
   };
 
   glm::vec3 lightPosition = glm::vec3(0.0f, 0.0f, -15.0f);
   glm::vec3 lightColor = glm::vec3(1.0f, 1.0f, 1.0f);
 
   glm::vec3 positions[] = {
-    glm::vec3(0.0f, -10.0f, -15.0f),
     lightPosition,
+    glm::vec3(0.0f, -10.0f, -15.0f),
+    glm::vec3(0.0f, -15.0f, -25.0f),
+  };
+
+  glm::vec3 scales[] = {
+    glm::vec3(1.0f),
+    glm::vec3(2.0f),
+    glm::vec3(50.0f, 1.0f, 50.0f),
   };
 
   /* Loop until the user closes the window */
@@ -87,27 +101,30 @@ int main() {
 
     glm::mat4 view = camera.getViewMatrix();
     glm::mat4 projection = glm::perspective(glm::radians(45.0f), window.getWidth() / window.getHeight(), 1.0f, 1000.0f);
+    glm::vec3 cameraPosition = camera.GetPosition();
 
-    for (unsigned i = 0; i < 2; i++) {
+    for (unsigned i = 0; i < 3; i++) {
       Model model = models[i];
       ShaderProgram* shaderPr = shaders[i];
 
-      glm::vec3 position;
+      glm::mat4 modelMat(1.0f);
 
-      if (i == 1) {
-        position = rotateAroundPoint(currentTime, 15, positions[i]);
+      if (i == 0) {
+        glm::vec3 position = rotateAroundPoint(currentTime, 15, positions[i]);
         lightPosition = position;
-      } else {
-        position = positions[i];
-      }
 
-      glm::mat4 modelMat = glm::translate(glm::mat4(1.0f), position);
+        modelMat = glm::translate(glm::mat4(1.0f), position);
+      } else {
+        modelMat = glm::translate(glm::mat4(1.0f), positions[i]);
+        modelMat = glm::scale(modelMat, scales[i]);
+      }
 
       shaderPr->bind();
       shaderPr->setUniformMatrix4fv("u_View", glm::value_ptr(view));
       shaderPr->setUniformMatrix4fv("u_Projection", glm::value_ptr(projection));
       shaderPr->setUniformMatrix4fv("u_Model", glm::value_ptr(modelMat));
 
+      shaderPr->setUniform3f("u_CameraPosition", cameraPosition.x, cameraPosition.y, cameraPosition.z);
       shaderPr->setUniform3f("u_LightPosition", lightPosition.x, lightPosition.y, lightPosition.z);
       shaderPr->setUniform3f("u_LightColor", lightColor.x, lightColor.y, lightColor.z);
 

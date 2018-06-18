@@ -23,6 +23,10 @@ class Camera {
 
     void processMouseMovement(float xOffset, float yOffset);
 
+    inline glm::vec3 GetPosition() const {
+      return m_Position;
+    }
+
   private:
     void updateCameraVectors();
 };
