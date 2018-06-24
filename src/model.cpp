@@ -6,6 +6,7 @@
 
 #include <fstream>
 #include <sstream>
+#include <algorithm>
 
 static std::vector<std::string> splitString(std::string str, const char delimeter) {
   char *token = std::strtok(&str[0], &delimeter);
@@ -21,20 +22,16 @@ static std::vector<std::string> splitString(std::string str, const char delimete
 }
 
 template <typename T>
-static std::pair<bool, int> findInVector(const std::vector<T> &vecOfElements, const T &element)
-{
+static std::pair<bool, int> findInVector(const std::vector<T> &vecOfElements, const T &element) {
 	std::pair<bool, int> result;
 
 	// Find given element in vector
 	auto it = std::find(vecOfElements.begin(), vecOfElements.end(), element);
 
-	if (it != vecOfElements.end())
-	{
+	if (it != vecOfElements.end()) {
 		result.second = distance(vecOfElements.begin(), it);
 		result.first = true;
-	}
-	else
-	{
+	} else {
 		result.first = false;
 		result.second = -1;
 	}
@@ -47,23 +44,55 @@ static void processVertex(
   std::vector<Vertex> &outVertexes,
   std::vector<unsigned int> &indexes,
   std::vector<glm::vec3> &coordinates,
-  int faceId
-  ) {
-  std::pair<bool, int> presenceInVector = findInVector(loadedCoordinates, faceId);
+  std::vector<glm::vec3> &normals,
+  std::string rawPoint
+) {
+  int vertexIndex = -1;
+  int textureIndex = -1;
+  int normalIndex = -1;
 
+  int slashesCnt = std::count(rawPoint.begin(), rawPoint.end(), '/');
+  std::vector<std::string> faceIndexes = splitString(rawPoint, '/');
+
+  switch(slashesCnt) {
+    case 0:
+      vertexIndex = std::atoi(rawPoint.c_str());
+      break;
+    case 1:
+      vertexIndex = std::atoi(faceIndexes[0].c_str());
+      textureIndex = std::atoi(faceIndexes[1].c_str());
+      break;
+    case 2:
+      vertexIndex = std::atoi(faceIndexes[0].c_str());
+
+      if (faceIndexes.size() == 3) {
+        textureIndex = std::atoi(faceIndexes[1].c_str());
+        normalIndex = std::atoi(faceIndexes[2].c_str());
+      } else {
+        normalIndex = std::atoi(faceIndexes[1].c_str());
+      }
+
+      break;
+  }
+
+  vertexIndex--;
+  normalIndex--;
+
+  Vertex vertex;
+  vertex.Position = coordinates[vertexIndex];
+  vertex.Normal = glm::vec3(0.0f);
+
+  if (normalIndex > -1) {
+    vertex.Normal = normals[normalIndex];
+  }
+
+  std::pair<bool, int> presenceInVector = findInVector(loadedCoordinates, vertexIndex);
   if (!presenceInVector.first) {
-    loadedCoordinates.push_back(faceId);
-
-    Vertex vertex;
-    vertex.Position = coordinates[faceId];
+    loadedCoordinates.push_back(vertexIndex);
     outVertexes.push_back(vertex);
   }
 
-  indexes.push_back(faceId);
-}
-
-Model::Model(const std::string pathToFile): m_PathToFile(pathToFile) {
-  m_Directory = pathToFile.substr(0, pathToFile.find_last_of('/'));
+  indexes.push_back(vertexIndex);
 }
 
 std::ostream& operator<<(std::ostream& os, const Mesh &m) {
@@ -78,7 +107,7 @@ std::ostream& operator<<(std::ostream& os, const Mesh &m) {
   os << "Vetexes: {" << std::endl;
 
   for (unsigned int i = 0; i < m.m_Vertices.size(); i++) {
-    os << "  " <<m.m_Vertices[i].Position.x << ", "
+    os << "  " << m.m_Vertices[i].Position.x << ", "
        << m.m_Vertices[i].Position.y << ", "
        << m.m_Vertices[i].Position.z;
 
@@ -90,11 +119,16 @@ std::ostream& operator<<(std::ostream& os, const Mesh &m) {
   return os;
 }
 
+Model::Model(const std::string pathToFile): m_PathToFile(pathToFile) {
+  m_Directory = pathToFile.substr(0, pathToFile.find_last_of('/'));
+}
+
 void Model::Load() {
   std::ifstream file(m_PathToFile);
 
   std::string line;
   std::vector<glm::vec3> coordinates;
+  std::vector<glm::vec3> normals;
   std::vector<unsigned int> indexes;
   std::vector<std::string> faces;
 
@@ -106,7 +140,11 @@ void Model::Load() {
     switch(line[0]) {
       case 'v':
         if (line[1] == ' ')
-          parseCoordinates(coordinates, line);
+          this->parseCoordinates(coordinates, line);
+
+        if (line[1] == 'n')
+          this->parseCoordinates(normals, line);
+
         break;
       case 'f':
         faces.push_back(line.substr(2));
@@ -115,23 +153,28 @@ void Model::Load() {
   }
 
   std::vector<int> loadedCoordinates;
+  std::vector<int> loadedNormals;
 
   for (unsigned int i = 0; i < faces.size(); i++) {
     std::vector<std::string> faceIndexes = splitString(faces[i], ' ');
 
-    int faceIndex0 = std::atoi(&faceIndexes[0][0]) - 1;
-    int faceIndex1 = std::atoi(&faceIndexes[1][0]) - 1;
-    int faceIndex2 = std::atoi(&faceIndexes[2][0]) - 1;
+    // std::reverse(faceIndexes.begin(), faceIndexes.end());
 
-    processVertex(loadedCoordinates, outVertexes, indexes, coordinates, faceIndex2);
-    processVertex(loadedCoordinates, outVertexes, indexes, coordinates, faceIndex1);
-    processVertex(loadedCoordinates, outVertexes, indexes, coordinates, faceIndex0);
+    for (int j = 0; j < faceIndexes.size(); j++) {
+      processVertex(
+        loadedCoordinates,
+        outVertexes,
+        indexes,
+        coordinates,
+        normals,
+        faceIndexes[j]
+      );
+    }
   }
 
-  Mesh mesh(outVertexes, indexes);
-
-  // std::cout << mesh << std::endl;
   // exit(0);
+
+  Mesh mesh(outVertexes, indexes);
 
   m_Meshes.push_back(mesh);
 }
@@ -215,11 +258,11 @@ Mesh Model::processMesh(const aiMesh* mesh) {
     position.z = mesh->mVertices[i].z;
     vertex.Position = position;
 
-    // glm::vec3 normal;
-    // normal.x = mesh->mNormals[i].x;
-    // normal.y = mesh->mNormals[i].y;
-    // normal.z = mesh->mNormals[i].z;
-    // vertex.Normal = normal;
+    glm::vec3 normal;
+    normal.x = mesh->mNormals[i].x;
+    normal.y = mesh->mNormals[i].y;
+    normal.z = mesh->mNormals[i].z;
+    vertex.Normal = normal;
 
     if (mesh->mTextureCoords[0]) {
       glm::vec2 vec;
@@ -242,9 +285,6 @@ Mesh Model::processMesh(const aiMesh* mesh) {
   }
 
   Mesh msh(vertices, indices);
-
-  // std::cout << msh << std::endl;
-  // exit(0);
 
   return msh;
 }

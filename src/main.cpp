@@ -47,15 +47,15 @@ int main() {
   Model cube("./cube.obj");
   cube.Load();
 
-  // Model sphere("./sphere.obj");
-  // sphere.Load();
+  Model sphere("./sphere.obj");
+  sphere.Load();
 
-  // Model dragon("./dragon.obj");
-  // dragon.Load();
+  Model dragon("./dragon.obj");
+  dragon.Load();
 
   Model models[] = {
-    // sphere,
-    // dragon,
+    sphere,
+    dragon,
     cube,
   };
 
@@ -84,7 +84,7 @@ int main() {
 
   glm::mat4 projection = glm::perspective(glm::radians(45.0f), window.getWidth() / window.getHeight(), 1.0f, 1000.0f);
 
-  int i = 0;
+  /*int i = 0;
   Model model = models[i];
   ShaderProgram* shaderPr = shaders[i];
 
@@ -104,6 +104,7 @@ int main() {
   shaderPr->setUniform3f("u_CameraPosition", cameraPosition.x, cameraPosition.y, cameraPosition.z);
   shaderPr->setUniform3f("u_LightPosition", lightPosition.x, lightPosition.y, lightPosition.z);
   shaderPr->setUniform3f("u_LightColor", lightColor.x, lightColor.y, lightColor.z);
+  */
 
 
   /* Loop until the user closes the window */
@@ -119,40 +120,40 @@ int main() {
 
     processInput(window.getGlfwWindow(), camera, deltaTime);
 
-    renderer.draw(model.getMeshes()[0].GetVao(), model.getMeshes()[0].GetIbo(), *shaderPr);
+    // renderer.draw(model.getMeshes()[0].GetVao(), model.getMeshes()[0].GetIbo(), *shaderPr);
 
-    // glm::mat4 view = camera.getViewMatrix();
-    // glm::vec3 cameraPosition = camera.GetPosition();
+    glm::mat4 view = camera.getViewMatrix();
+    glm::vec3 cameraPosition = camera.GetPosition();
 
-    // for (unsigned i = 0; i < 1; i++) {
-    //   Model model = models[i];
-    //   ShaderProgram* shaderPr = shaders[i];
+    for (unsigned i = 0; i < 3; i++) {
+      Model model = models[i];
+      ShaderProgram* shaderPr = shaders[i];
 
-    //   glm::mat4 modelMat(1.0f);
+      glm::mat4 modelMat(1.0f);
 
-    //   if (i == 0) {
-    //     glm::vec3 position = rotateAroundPoint(currentTime, 15, positions[i]);
-    //     lightPosition = position;
+      if (i == 0) {
+        glm::vec3 position = rotateAroundPoint(currentTime, 15, positions[i]);
+        lightPosition = position;
 
-    //     modelMat = glm::translate(glm::mat4(1.0f), position);
-    //   } else {
-    //     modelMat = glm::translate(glm::mat4(1.0f), positions[i]);
-    //     modelMat = glm::scale(modelMat, scales[i]);
-    //   }
+        modelMat = glm::translate(glm::mat4(1.0f), position);
+      } else {
+        modelMat = glm::translate(glm::mat4(1.0f), positions[i]);
+        modelMat = glm::scale(modelMat, scales[i]);
+      }
 
-    //   shaderPr->bind();
-    //   shaderPr->setUniformMatrix4fv("u_View", glm::value_ptr(view));
-    //   shaderPr->setUniformMatrix4fv("u_Projection", glm::value_ptr(projection));
-    //   shaderPr->setUniformMatrix4fv("u_Model", glm::value_ptr(modelMat));
+      shaderPr->bind();
+      shaderPr->setUniformMatrix4fv("u_View", glm::value_ptr(view));
+      shaderPr->setUniformMatrix4fv("u_Projection", glm::value_ptr(projection));
+      shaderPr->setUniformMatrix4fv("u_Model", glm::value_ptr(modelMat));
 
-    //   shaderPr->setUniform3f("u_CameraPosition", cameraPosition.x, cameraPosition.y, cameraPosition.z);
-    //   shaderPr->setUniform3f("u_LightPosition", lightPosition.x, lightPosition.y, lightPosition.z);
-    //   shaderPr->setUniform3f("u_LightColor", lightColor.x, lightColor.y, lightColor.z);
+      shaderPr->setUniform3f("u_CameraPosition", cameraPosition.x, cameraPosition.y, cameraPosition.z);
+      shaderPr->setUniform3f("u_LightPosition", lightPosition.x, lightPosition.y, lightPosition.z);
+      shaderPr->setUniform3f("u_LightColor", lightColor.x, lightColor.y, lightColor.z);
 
-    //   for(unsigned int j = 0; j < model.getMeshes().size(); j++) {
-    //     renderer.draw(model.getMeshes()[j].GetVao(), model.getMeshes()[j].GetIbo(), *shaderPr);
-    //   }
-    // }
+      for(unsigned int j = 0; j < model.getMeshes().size(); j++) {
+        renderer.draw(model.getMeshes()[j].GetVao(), model.getMeshes()[j].GetIbo(), *shaderPr);
+      }
+    }
 
     /* Swap front and back buffers */
     window.swapBuffers();
