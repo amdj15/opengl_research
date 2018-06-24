@@ -31,7 +31,7 @@ Window::Window(unsigned int width, unsigned int height, std::string title)
   /* Make the window's context current */
   glfwMakeContextCurrent(m_Window);
   glfwSwapInterval(1);
-  glfwSetInputMode(m_Window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+  glfwSetInputMode(m_Window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 
   if (glewInit() != GLEW_OK) {
     m_InitErrorString = "Can't init glew";

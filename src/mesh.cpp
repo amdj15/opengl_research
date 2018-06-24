@@ -2,14 +2,14 @@
 #include "vertex_buffer_layout.h"
 #include "vertex_buffer.h"
 #include <vector>
-
 #include <iostream>
 
 Mesh::Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices):
   m_Vertices(vertices),
-  m_Indices(indices) {
-    setupMesh();
-  }
+  m_Indices(indices)
+{
+  setupMesh();
+}
 
 void Mesh::setupMesh() {
   m_IBO.SetData(&m_Indices[0], m_Indices.size());
@@ -21,20 +21,37 @@ void Mesh::setupMesh() {
     vertexesData.push_back(m_Vertices[i].Position.y);
     vertexesData.push_back(m_Vertices[i].Position.z);
 
-    vertexesData.push_back(m_Vertices[i].Normal.x);
-    vertexesData.push_back(m_Vertices[i].Normal.y);
-    vertexesData.push_back(m_Vertices[i].Normal.z);
+    // vertexesData.push_back(m_Vertices[i].Normal.x);
+    // vertexesData.push_back(m_Vertices[i].Normal.y);
+    // vertexesData.push_back(m_Vertices[i].Normal.z);
 
-    vertexesData.push_back(m_Vertices[i].TexCoords.x);
-    vertexesData.push_back(m_Vertices[i].TexCoords.y);
+    // vertexesData.push_back(m_Vertices[i].TexCoords.x);
+    // vertexesData.push_back(m_Vertices[i].TexCoords.y);
   }
 
   VertexBuffer vbo(&vertexesData[0], sizeof(float) * vertexesData.size());
 
   VertexBufferLayout layout;
   layout.push(3);
-  layout.push(3);
-  layout.push(2);
+  // layout.push(3);
+  // layout.push(2);
+
+
+
+  // float positions[] = {
+  //   -0.5f, -0.5f, 0.0f,
+  //    0.5f, -0.5f, 0.0f,
+  //    0.5f,  0.5f, 0.0f,
+  //   -0.5f,  0.5f, 0.0f
+  // };
+
+  // VertexBuffer vbo(positions, sizeof(positions));
+
+  // unsigned int indexes[] = {
+  //   1, 2, 0,
+  //   1, 3, 2
+  // };
+
 
   m_VAO.addBuffer(vbo, layout);
 

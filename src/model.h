@@ -19,8 +19,17 @@ class Model {
 
   public:
     void Load();
+    void Assimp();
 
     inline std::vector<Mesh> getMeshes() const {
       return m_Meshes;
     }
+
+  private:
+    void parseCoordinates(std::vector<glm::vec3> &vertices, std::string line);
+    void parseFace(
+      std::vector<unsigned int> &indexes,
+      std::vector<Vertex> &outVertexes,
+      const std::string &line
+    );
 };

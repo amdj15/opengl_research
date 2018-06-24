@@ -19,6 +19,7 @@ bool GLLogError(const char* func, const char* file, int line);
 
 class Renderer {
   public:
+    Renderer();
     void clear() const;
     void draw(const VertexArray &vao, const IndexBuffer &ibo, const ShaderProgram &sh) const;
 };
