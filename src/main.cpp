@@ -44,20 +44,20 @@ int main() {
   float lastTime = 0.0f;
   float deltaTime = 0.0f;
 
-  Model cube("./cube.obj");
-  cube.Load();
+  std::size_t modelsNumber = 3;
 
-  Model sphere("./sphere.obj");
-  sphere.Load();
+  Model *dragon = new Model("./dragon.obj", "base");
+  Model *cube = new Model("./cube.obj");
+  Model *sphere = new Model("./sphere.obj");
 
-  Model dragon("./dragon.obj");
-  dragon.Load();
+  dragon->Load();
+  cube->Load();
+  sphere->Load();
 
-  Model models[] = {
-    sphere,
-    dragon,
-    cube,
-  };
+  Model *models = new Model[modelsNumber];
+  models[0] = *sphere;
+  models[1] = *dragon;
+  models[2] = *cube;
 
   ShaderProgram *modelShader = loadShader("model");
 
@@ -84,29 +84,6 @@ int main() {
 
   glm::mat4 projection = glm::perspective(glm::radians(45.0f), window.getWidth() / window.getHeight(), 1.0f, 1000.0f);
 
-  /*int i = 0;
-  Model model = models[i];
-  ShaderProgram* shaderPr = shaders[i];
-
-  glm::mat4 modelMat(1.0f);
-
-    glm::mat4 view = camera.getViewMatrix();
-    glm::vec3 cameraPosition = camera.GetPosition();
-
-    // modelMat = glm::translate(glm::mat4(1.0f), positions[i]);
-    // modelMat = glm::scale(modelMat, glm::vec3(0.5f));
-
-  shaderPr->bind();
-  shaderPr->setUniformMatrix4fv("u_View", glm::value_ptr(view));
-  shaderPr->setUniformMatrix4fv("u_Projection", glm::value_ptr(projection));
-  shaderPr->setUniformMatrix4fv("u_Model", glm::value_ptr(modelMat));
-
-  shaderPr->setUniform3f("u_CameraPosition", cameraPosition.x, cameraPosition.y, cameraPosition.z);
-  shaderPr->setUniform3f("u_LightPosition", lightPosition.x, lightPosition.y, lightPosition.z);
-  shaderPr->setUniform3f("u_LightColor", lightColor.x, lightColor.y, lightColor.z);
-  */
-
-
   /* Loop until the user closes the window */
   while (window.isOpen()) {
     float currentTime = glfwGetTime();
@@ -120,13 +97,10 @@ int main() {
 
     processInput(window.getGlfwWindow(), camera, deltaTime);
 
-    // renderer.draw(model.getMeshes()[0].GetVao(), model.getMeshes()[0].GetIbo(), *shaderPr);
-
     glm::mat4 view = camera.getViewMatrix();
     glm::vec3 cameraPosition = camera.GetPosition();
 
-    for (unsigned i = 0; i < 3; i++) {
-      Model model = models[i];
+    for (unsigned i = 0; i < modelsNumber; i++) {
       ShaderProgram* shaderPr = shaders[i];
 
       glm::mat4 modelMat(1.0f);
@@ -150,8 +124,8 @@ int main() {
       shaderPr->setUniform3f("u_LightPosition", lightPosition.x, lightPosition.y, lightPosition.z);
       shaderPr->setUniform3f("u_LightColor", lightColor.x, lightColor.y, lightColor.z);
 
-      for(unsigned int j = 0; j < model.getMeshes().size(); j++) {
-        renderer.draw(model.getMeshes()[j].GetVao(), model.getMeshes()[j].GetIbo(), *shaderPr);
+      for(unsigned int j = 0; j < models[i].getMeshes().size(); j++) {
+        renderer.draw(models[i].getMeshes()[j].GetVao(), models[i].getMeshes()[j].GetIbo(), *shaderPr);
       }
     }
 
@@ -162,9 +136,13 @@ int main() {
     window.pollEvents();
   }
 
-  for (int i = 0; i < 2; i++) {
+  for (unsigned int i = 0; i < 2; i++) {
     delete shaders[i];
   }
+
+  delete dragon;
+  delete sphere;
+  delete cube;
 
   return 0;
 }

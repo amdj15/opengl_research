@@ -4,27 +4,25 @@
 #include <vector>
 #include <assimp/scene.h>
 #include "mesh.h"
+#include "loaders/model_loader.h"
 
 class Model {
   public:
+    Model();
     Model(const std::string pathToFile);
+    Model(const std::string pathToFile, const std::string loader);
+    ~Model();
 
   private:
     std::vector<Mesh> m_Meshes;
     std::string m_PathToFile;
     std::string m_Directory;
-
-    void processNode(const aiNode* node, const aiScene* scene);
-    Mesh processMesh(const aiMesh* mesh);
+    ModelLoader* m_Loader;
 
   public:
     void Load();
-    void Assimp();
 
     inline std::vector<Mesh> getMeshes() const {
       return m_Meshes;
     }
-
-  private:
-    void parseCoordinates(std::vector<glm::vec3> &vertices, std::string line);
 };

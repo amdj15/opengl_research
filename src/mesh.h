@@ -5,17 +5,7 @@
 
 #include "vertex_array.h"
 #include "index_buffer.h"
-
-struct Vertex {
-  glm::vec3 Position;
-  glm::vec3 Normal;
-  glm::vec2 TexCoords;
-};
-
-struct MeshTexture {
-  unsigned int id;
-  std::string type;
-};
+#include "loaders/model_loader.h"
 
 class Mesh {
   public:
