@@ -13,4 +13,5 @@ class AssimpLoader : public ModelLoader {
 
   private:
     void processMesh(const aiMesh* mesh);
+    void processNode(const aiNode* node, const aiScene* scene);
 };

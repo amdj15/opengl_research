@@ -10,7 +10,6 @@ class Model {
   public:
     Model();
     Model(const std::string pathToFile);
-    Model(const std::string pathToFile, const std::string loader);
     ~Model();
 
   private:

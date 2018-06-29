@@ -1,5 +1,4 @@
 #include "assimp_loader.h"
-#include "base_loader.h"
 #include <iostream>
 
 AssimpLoader::AssimpLoader(std::string pathToFile) {
@@ -10,20 +9,34 @@ AssimpLoader::~AssimpLoader() {}
 
 void AssimpLoader::Load() {
   Assimp::Importer importer;
-  const aiScene *scene = importer.ReadFile(m_PathToFile, aiProcess_Triangulate | aiProcess_FlipUVs);
+  const aiScene *scene = importer.ReadFile(m_PathToFile, aiProcess_Triangulate |
+                                                         aiProcess_FlipUVs |
+                                                         aiProcess_GenNormals |
+                                                         aiProcess_JoinIdenticalVertices
+                                          );
 
   if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) {
     std::cout << "ERROR::ASSIMP::" << importer.GetErrorString() << std::endl;
     return;
   }
 
-  const aiMesh *mesh = scene->mMeshes[0];
+  this->processNode(scene->mRootNode, scene);
+}
 
-  this->processMesh(mesh);
+void AssimpLoader::processNode(const aiNode* node, const aiScene* scene) {
+  for (unsigned int i = 0; i < node->mNumMeshes; i++) {
+    aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
+    this->processMesh(mesh);
+  }
+
+  for (unsigned int i = 0; i < node->mNumChildren; i ++) {
+    this->processNode(node->mChildren[i], scene);
+  }
 }
 
 void AssimpLoader::processMesh(const aiMesh* mesh) {
-  std::cout << "vertices number: " << mesh->mNumVertices << std::endl;
+  std::vector<unsigned int> indexes;
+  std::vector<Vertex> vertexes;
 
   for (unsigned int i = 0; i < mesh->mNumVertices; i++) {
     Vertex vertex;
@@ -49,25 +62,19 @@ void AssimpLoader::processMesh(const aiMesh* mesh) {
       vertex.TexCoords = glm::vec2(0.0f, 0.0f);
     }
 
-    m_Vertexes.push_back(vertex);
+    vertexes.push_back(vertex);
   }
 
   for(unsigned int i = 0; i < mesh->mNumFaces; i++) {
     aiFace face = mesh->mFaces[i];
     // retrieve all indices of the face and store them in the indices vector
     for(unsigned int j = 0; j < face.mNumIndices; j++) {
-      m_Indexes.push_back(face.mIndices[j]);
+      indexes.push_back(face.mIndices[j]);
     }
   }
-}
 
-// void AssimpLoader::processNode(const aiNode* node, const aiScene* scene) {
-//   for (unsigned int i = 0; i < node->mNumMeshes; i++) {
-//     aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
-//     m_Meshes.push_back(processMesh(mesh));
-//   }
-//
-//   for (unsigned int i = 0; i < node->mNumChildren; i ++) {
-//     processNode(node->mChildren[i], scene);
-//   }
-// }
+  m_Vertexes.push_back(vertexes);
+  m_Indexes.push_back(indexes);
+
+  std::cout << "vertices number: " << mesh->mNumVertices << ", indexes: " << indexes.size() << std::endl;
+}

@@ -25,8 +25,8 @@ void Mesh::setupMesh() {
     vertexesData.push_back(m_Vertices[i].Normal.y);
     vertexesData.push_back(m_Vertices[i].Normal.z);
 
-    // vertexesData.push_back(m_Vertices[i].TexCoords.x);
-    // vertexesData.push_back(m_Vertices[i].TexCoords.y);
+    vertexesData.push_back(m_Vertices[i].TexCoords.x);
+    vertexesData.push_back(m_Vertices[i].TexCoords.y);
   }
 
   VertexBuffer vbo(&vertexesData[0], sizeof(float) * vertexesData.size());
@@ -34,24 +34,7 @@ void Mesh::setupMesh() {
   VertexBufferLayout layout;
   layout.push(3);
   layout.push(3);
-  // layout.push(2);
-
-
-
-  // float positions[] = {
-  //   -0.5f, -0.5f, 0.0f,
-  //    0.5f, -0.5f, 0.0f,
-  //    0.5f,  0.5f, 0.0f,
-  //   -0.5f,  0.5f, 0.0f
-  // };
-
-  // VertexBuffer vbo(positions, sizeof(positions));
-
-  // unsigned int indexes[] = {
-  //   1, 2, 0,
-  //   1, 3, 2
-  // };
-
+  layout.push(2);
 
   m_VAO.addBuffer(vbo, layout);
 

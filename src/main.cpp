@@ -44,20 +44,23 @@ int main() {
   float lastTime = 0.0f;
   float deltaTime = 0.0f;
 
-  std::size_t modelsNumber = 3;
+  std::size_t modelsNumber = 4;
 
-  Model *dragon = new Model("./dragon.obj", "base");
+  Model *dragon = new Model("./dragon.obj");
   Model *cube = new Model("./cube.obj");
   Model *sphere = new Model("./sphere.obj");
+  Model *man = new Model("./muro.obj");
 
   dragon->Load();
   cube->Load();
   sphere->Load();
+  man->Load();
 
   Model *models = new Model[modelsNumber];
   models[0] = *sphere;
   models[1] = *dragon;
   models[2] = *cube;
+  models[3] = *man;
 
   ShaderProgram *modelShader = loadShader("model");
 
@@ -65,6 +68,7 @@ int main() {
     loadShader("light_source"),
     modelShader,
     modelShader,
+    modelShader
   };
 
   glm::vec3 lightPosition = glm::vec3(0.0f, 0.0f, -15.0f);
@@ -72,14 +76,16 @@ int main() {
 
   glm::vec3 positions[] = {
     lightPosition,
-    glm::vec3(0.0f, -10.0f, -15.0f),
-    glm::vec3(0.0f, -15.0f, -25.0f),
+    glm::vec3(0.0f, -13.5f, -15.0f),
+    glm::vec3(-25.0f, -15.0f, -25.0f),
+    glm::vec3(-10.0f, -13.5f, -20.0f),
   };
 
   glm::vec3 scales[] = {
-    glm::vec3(1.0f),
     glm::vec3(2.0f),
+    glm::vec3(0.5f),
     glm::vec3(50.0f, 1.0f, 50.0f),
+    glm::vec3(0.03f),
   };
 
   glm::mat4 projection = glm::perspective(glm::radians(45.0f), window.getWidth() / window.getHeight(), 1.0f, 1000.0f);
@@ -143,6 +149,7 @@ int main() {
   delete dragon;
   delete sphere;
   delete cube;
+  delete man;
 
   return 0;
 }
@@ -183,7 +190,7 @@ static void mouseCallback(GLFWwindow* window, double xpos, double ypos) {
   mousePositions.lastX = xpos;
   mousePositions.lastY = ypos;
 
-  std::cout << "x, y offsetts: " << xoffset << ", " << yoffset << std::endl;
+  // std::cout << "x, y offsetts: " << xoffset << ", " << yoffset << std::endl;
 
   camera.processMouseMovement(xoffset, yoffset);
 }
