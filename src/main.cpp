@@ -32,7 +32,7 @@ Camera camera;
 
 int main() {
   // TODO: check intitialization errors
-  Window window(1100, 900, "Cubes");
+  Window window("Cubes");
   glfwSetCursorPosCallback(window.getGlfwWindow(), mouseCallback);
 
   mousePositions.lastX = window.getWidth() / 2.0f;
