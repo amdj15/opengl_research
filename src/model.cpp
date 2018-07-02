@@ -55,5 +55,7 @@ void Model::Load() {
     Mesh mesh(vertexes[i], indexes[i]);
     m_Meshes.push_back(mesh);
   }
+
+  std::cout << "Model has " << m_Meshes.size() << " meshses" << std::endl;
 }
 

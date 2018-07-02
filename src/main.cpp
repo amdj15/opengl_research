@@ -44,23 +44,26 @@ int main() {
   float lastTime = 0.0f;
   float deltaTime = 0.0f;
 
-  std::size_t modelsNumber = 4;
+  std::size_t modelsNumber = 5;
 
   Model *dragon = new Model("./dragon.obj");
   Model *cube = new Model("./cube.obj");
   Model *sphere = new Model("./sphere.obj");
   Model *man = new Model("./muro.obj");
+  Model *table = new Model("./table.obj");
 
   dragon->Load();
   cube->Load();
   sphere->Load();
   man->Load();
+  table->Load();
 
   Model *models = new Model[modelsNumber];
   models[0] = *sphere;
   models[1] = *dragon;
   models[2] = *cube;
   models[3] = *man;
+  models[4] = *table;
 
   ShaderProgram *modelShader = loadShader("model");
 
@@ -68,7 +71,8 @@ int main() {
     loadShader("light_source"),
     modelShader,
     modelShader,
-    modelShader
+    modelShader,
+    modelShader,
   };
 
   glm::vec3 lightPosition = glm::vec3(0.0f, 0.0f, -15.0f);
@@ -79,6 +83,7 @@ int main() {
     glm::vec3(0.0f, -13.5f, -15.0f),
     glm::vec3(-25.0f, -15.0f, -25.0f),
     glm::vec3(-10.0f, -13.5f, -20.0f),
+    glm::vec3(10.0f, -13.5f, -10.0f),
   };
 
   glm::vec3 scales[] = {
@@ -86,17 +91,19 @@ int main() {
     glm::vec3(0.5f),
     glm::vec3(50.0f, 1.0f, 50.0f),
     glm::vec3(0.03f),
+    glm::vec3(0.1f),
   };
 
   glm::mat4 projection = glm::perspective(glm::radians(45.0f), window.getWidth() / window.getHeight(), 1.0f, 1000.0f);
+
+  unsigned int activeShaderId;
 
   /* Loop until the user closes the window */
   while (window.isOpen()) {
     float currentTime = glfwGetTime();
     deltaTime = currentTime - lastTime;
     lastTime = currentTime;
-
-    std::cout << "Time: " << deltaTime * 1000 << " ms" << std::endl;
+    unsigned int drawCallsCnt = 0;
 
     /* Render here */
     renderer.clear();
@@ -121,7 +128,11 @@ int main() {
         modelMat = glm::scale(modelMat, scales[i]);
       }
 
-      shaderPr->bind();
+      if (activeShaderId != shaderPr->getId()) {
+        shaderPr->bind();
+        activeShaderId = shaderPr->getId();
+      }
+
       shaderPr->setUniformMatrix4fv("u_View", glm::value_ptr(view));
       shaderPr->setUniformMatrix4fv("u_Projection", glm::value_ptr(projection));
       shaderPr->setUniformMatrix4fv("u_Model", glm::value_ptr(modelMat));
@@ -131,6 +142,8 @@ int main() {
       shaderPr->setUniform3f("u_LightColor", lightColor.x, lightColor.y, lightColor.z);
 
       for(unsigned int j = 0; j < models[i].getMeshes().size(); j++) {
+        drawCallsCnt++;
+
         renderer.draw(models[i].getMeshes()[j].GetVao(), models[i].getMeshes()[j].GetIbo(), *shaderPr);
       }
     }
@@ -140,6 +153,8 @@ int main() {
 
     /* Poll for and process events */
     window.pollEvents();
+
+    std::cout << "Time: " << deltaTime * 1000 << " ms, draw calls: " << drawCallsCnt << std::endl;
   }
 
   for (unsigned int i = 0; i < 2; i++) {

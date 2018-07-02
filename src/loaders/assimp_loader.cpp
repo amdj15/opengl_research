@@ -12,7 +12,10 @@ void AssimpLoader::Load() {
   const aiScene *scene = importer.ReadFile(m_PathToFile, aiProcess_Triangulate |
                                                          aiProcess_FlipUVs |
                                                          aiProcess_GenNormals |
-                                                         aiProcess_JoinIdenticalVertices
+                                                         aiProcess_JoinIdenticalVertices |
+                                                         aiProcess_OptimizeGraph |
+                                                         aiProcess_OptimizeMeshes |
+                                                         aiProcess_FindInstances
                                           );
 
   if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) {
