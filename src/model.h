@@ -5,6 +5,7 @@
 #include <assimp/scene.h>
 #include "mesh.h"
 #include "loaders/model_loader.h"
+#include "shader_program.h"
 
 class Model {
   public:
@@ -13,7 +14,7 @@ class Model {
     ~Model();
 
   private:
-    std::vector<Mesh> m_Meshes;
+    std::vector<Mesh*> m_Meshes;
     std::string m_PathToFile;
     std::string m_Directory;
     ModelLoader* m_Loader;
@@ -21,7 +22,7 @@ class Model {
   public:
     void Load();
 
-    inline std::vector<Mesh> getMeshes() const {
+    inline std::vector<Mesh*> getMeshes() const {
       return m_Meshes;
     }
 };

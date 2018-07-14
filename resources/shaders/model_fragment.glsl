@@ -6,17 +6,15 @@ in vec2 v_TexCoords;
 in vec3 v_SurfaceNormal;
 in vec3 v_ToLightVector;
 in vec3 v_ToCamerVector;
+in vec3 v_Color;
 
 uniform vec4 u_Color;
 uniform vec3 u_LightColor;
 
-uniform sampler2D u_TextureBg;
-uniform sampler2D u_TextureTag;
+uniform sampler2D texture_diffuse1;
 
 void main()
 {
-  vec3 color = vec3(0.4, 0.1, 0.7);
-
   // ambient light
   float ambientStength = 0.1f;
   vec3 ambientLight = u_LightColor * ambientStength;
@@ -45,6 +43,6 @@ void main()
   vec3 specularLight = damperFactor * reflectivity * u_LightColor;
 
   // result
-  vec3 resultColor = (ambientLight + diffuseLight + specularLight) * color;
-  outColor = vec4(resultColor, 1.0f);
+  vec3 resultColor = (ambientLight + diffuseLight + specularLight);
+  outColor = texture(texture_diffuse1, v_TexCoords) * vec4(resultColor, 1.0f);
 }

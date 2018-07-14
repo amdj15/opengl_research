@@ -3,11 +3,13 @@
 layout(location = 0) in vec3 position;
 layout(location = 1) in vec3 normal;
 layout(location = 2) in vec2 texCoords;
+layout(location = 3) in vec3 color;
 
 out vec2 v_TexCoords;
 out vec3 v_SurfaceNormal;
 out vec3 v_ToLightVector;
 out vec3 v_ToCamerVector;
+out vec3 v_Color;
 
 uniform mat4 u_Model;
 uniform mat4 u_View;
@@ -24,4 +26,5 @@ void main()
   v_SurfaceNormal = (u_Model * vec4(normal, 0.0)).xyz;
   v_ToLightVector = u_LightPosition - worldPosition.xyz;
   v_ToCamerVector = u_CameraPosition - worldPosition.xyz;
+  v_Color = color;
 }

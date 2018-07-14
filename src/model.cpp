@@ -1,6 +1,5 @@
 #include "model.h"
 #include "loaders/assimp_loader.h"
-
 #include <iostream>
 
 std::ostream& operator<<(std::ostream& os, const Mesh &m) {
@@ -34,14 +33,19 @@ std::ostream& operator<<(std::ostream& os, const Mesh &m) {
 
 Model::Model() {}
 
-Model::Model(const std::string pathToFile):
-  m_PathToFile(pathToFile) {
+Model::Model(const std::string pathToFile): m_PathToFile(pathToFile) {
   m_Directory = pathToFile.substr(0, pathToFile.find_last_of('/'));
-  m_Loader = new AssimpLoader(pathToFile);
+  m_Loader = new AssimpLoader(pathToFile, m_Directory);
 }
 
 Model::~Model() {
   delete m_Loader;
+
+  std::cout << "Delete model " << m_PathToFile << std::endl;
+
+  for (unsigned int i = 0; i < m_Meshes.size(); i++) {
+    delete m_Meshes[i];
+  }
 }
 
 void Model::Load() {
@@ -49,10 +53,11 @@ void Model::Load() {
 
   std::vector<std::vector<Vertex> > vertexes = m_Loader->GetVertexes();
   std::vector<std::vector<unsigned int> > indexes = m_Loader->GetIndexes();
+  std::vector<std::map<std::string, MeshTexture> > textures = m_Loader->GetTextures();
   std::size_t cnt = vertexes.size();
 
-  for (unsigned int i = 0; i < cnt; i ++) {
-    Mesh mesh(vertexes[i], indexes[i]);
+  for (unsigned int i = 0; i < cnt; i++) {
+    Mesh *mesh = new Mesh(vertexes[i], indexes[i], textures[i]);
     m_Meshes.push_back(mesh);
   }
 

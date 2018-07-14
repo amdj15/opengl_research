@@ -23,4 +23,6 @@ class Texture {
     inline int getHeight() const {
       return m_Height;
     }
+
+    inline const unsigned int GetRendererId() const { return m_RendererId; }
 };

@@ -44,36 +44,39 @@ int main() {
   float lastTime = 0.0f;
   float deltaTime = 0.0f;
 
-  std::size_t modelsNumber = 5;
-
-  Model *dragon = new Model("./dragon.obj");
-  Model *cube = new Model("./cube.obj");
-  Model *sphere = new Model("./sphere.obj");
-  Model *man = new Model("./muro.obj");
-  Model *table = new Model("./table.obj");
-
-  dragon->Load();
-  cube->Load();
-  sphere->Load();
-  man->Load();
-  table->Load();
-
-  Model *models = new Model[modelsNumber];
-  models[0] = *sphere;
-  models[1] = *dragon;
-  models[2] = *cube;
-  models[3] = *man;
-  models[4] = *table;
-
   ShaderProgram *modelShader = loadShader("model");
+  ShaderProgram *lightSourceShader = loadShader("light_source");
 
   ShaderProgram* shaders[] = {
-    loadShader("light_source"),
+    lightSourceShader,
     modelShader,
     modelShader,
     modelShader,
     modelShader,
   };
+
+  std::size_t modelsNumber = 3;
+
+  Model *cube = new Model("./cube.obj");
+  Model *sphere = new Model("./sphere.obj");
+  Model *man = new Model("./muro.obj");
+  Model *table = new Model("./table.obj");
+  Model *house = new Model("./house/farmhouse_obj.obj");
+  Model *dragon = new Model("./dragon.obj");
+
+  // cube->Load();
+  sphere->Load();
+  // man->Load();
+  // table->Load();
+  house->Load();
+  // dragon->Load();
+
+  Model *models = new Model[modelsNumber];
+  models[0] = *sphere;
+  models[1] = *house;
+  // models[2] = *cube;
+  // models[3] = *man;
+  // models[4] = *dragon;
 
   glm::vec3 lightPosition = glm::vec3(0.0f, 0.0f, -15.0f);
   glm::vec3 lightColor = glm::vec3(1.0f, 1.0f, 1.0f);
@@ -96,6 +99,16 @@ int main() {
 
   glm::mat4 projection = glm::perspective(glm::radians(45.0f), window.getWidth() / window.getHeight(), 1.0f, 1000.0f);
 
+  modelShader->bind();
+  modelShader->setUniformMatrix4fv("u_Projection", glm::value_ptr(projection));
+  modelShader->setUniform3f("u_LightColor", lightColor.x, lightColor.y, lightColor.z);
+
+  modelShader->setUniform1i("texture_diffuse1", 0);
+
+  lightSourceShader->bind();
+  lightSourceShader->setUniform3f("u_LightColor", lightColor.x, lightColor.y, lightColor.z);
+  lightSourceShader->setUniformMatrix4fv("u_Projection", glm::value_ptr(projection));
+
   unsigned int activeShaderId;
 
   /* Loop until the user closes the window */
@@ -113,7 +126,15 @@ int main() {
     glm::mat4 view = camera.getViewMatrix();
     glm::vec3 cameraPosition = camera.GetPosition();
 
-    for (unsigned i = 0; i < modelsNumber; i++) {
+    for (unsigned int i = 0; i < 2; i++) {
+      ShaderProgram* shader = shaders[i];
+
+      shader->bind();
+      shader->setUniform3f("u_CameraPosition", cameraPosition.x, cameraPosition.y, cameraPosition.z);
+      shader->setUniform3f("u_LightPosition", lightPosition.x, lightPosition.y, lightPosition.z);
+    }
+
+    for (unsigned int i = 0; i < modelsNumber; i++) {
       ShaderProgram* shaderPr = shaders[i];
 
       glm::mat4 modelMat(1.0f);
@@ -134,17 +155,12 @@ int main() {
       }
 
       shaderPr->setUniformMatrix4fv("u_View", glm::value_ptr(view));
-      shaderPr->setUniformMatrix4fv("u_Projection", glm::value_ptr(projection));
       shaderPr->setUniformMatrix4fv("u_Model", glm::value_ptr(modelMat));
-
-      shaderPr->setUniform3f("u_CameraPosition", cameraPosition.x, cameraPosition.y, cameraPosition.z);
-      shaderPr->setUniform3f("u_LightPosition", lightPosition.x, lightPosition.y, lightPosition.z);
-      shaderPr->setUniform3f("u_LightColor", lightColor.x, lightColor.y, lightColor.z);
 
       for(unsigned int j = 0; j < models[i].getMeshes().size(); j++) {
         drawCallsCnt++;
 
-        renderer.draw(models[i].getMeshes()[j].GetVao(), models[i].getMeshes()[j].GetIbo(), *shaderPr);
+        renderer.draw(models[i].getMeshes()[j]->GetVao(), models[i].getMeshes()[j]->GetIbo(), *shaderPr);
       }
     }
 
@@ -157,14 +173,15 @@ int main() {
     std::cout << "Time: " << deltaTime * 1000 << " ms, draw calls: " << drawCallsCnt << std::endl;
   }
 
-  for (unsigned int i = 0; i < 2; i++) {
-    delete shaders[i];
-  }
+  delete modelShader;
+  delete lightSourceShader;
 
   delete dragon;
   delete sphere;
   delete cube;
   delete man;
+  delete table;
+  delete house;
 
   return 0;
 }

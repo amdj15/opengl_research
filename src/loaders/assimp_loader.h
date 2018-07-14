@@ -6,12 +6,13 @@
 
 class AssimpLoader : public ModelLoader {
   public:
-    AssimpLoader(std::string pathToFile);
+    AssimpLoader(std::string pathToFile, std::string Directory);
     ~AssimpLoader();
 
     void Load() override;
 
   private:
-    void processMesh(const aiMesh* mesh);
-    void processNode(const aiNode* node, const aiScene* scene);
+    void processMesh(const aiMesh* mesh, const aiScene *scene);
+    void processNode(const aiNode* node, const aiScene *scene);
+    void loadTexture(const aiMaterial *material, aiTextureType type, std::string typeName, std::map<std::string, MeshTexture> &textures);
 };

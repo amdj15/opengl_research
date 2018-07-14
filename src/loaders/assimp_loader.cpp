@@ -1,8 +1,9 @@
 #include "assimp_loader.h"
 #include <iostream>
 
-AssimpLoader::AssimpLoader(std::string pathToFile) {
+AssimpLoader::AssimpLoader(std::string pathToFile, std::string directory) {
   m_PathToFile = pathToFile;
+  m_Directory = directory;
 }
 
 AssimpLoader::~AssimpLoader() {}
@@ -10,7 +11,7 @@ AssimpLoader::~AssimpLoader() {}
 void AssimpLoader::Load() {
   Assimp::Importer importer;
   const aiScene *scene = importer.ReadFile(m_PathToFile, aiProcess_Triangulate |
-                                                         aiProcess_FlipUVs |
+                                                         // aiProcess_FlipUVs |
                                                          aiProcess_GenNormals |
                                                          aiProcess_JoinIdenticalVertices |
                                                          aiProcess_OptimizeGraph |
@@ -29,7 +30,7 @@ void AssimpLoader::Load() {
 void AssimpLoader::processNode(const aiNode* node, const aiScene* scene) {
   for (unsigned int i = 0; i < node->mNumMeshes; i++) {
     aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
-    this->processMesh(mesh);
+    this->processMesh(mesh, scene);
   }
 
   for (unsigned int i = 0; i < node->mNumChildren; i ++) {
@@ -37,9 +38,10 @@ void AssimpLoader::processNode(const aiNode* node, const aiScene* scene) {
   }
 }
 
-void AssimpLoader::processMesh(const aiMesh* mesh) {
+void AssimpLoader::processMesh(const aiMesh* mesh, const aiScene *scene) {
   std::vector<unsigned int> indexes;
   std::vector<Vertex> vertexes;
+  std::map<std::string, MeshTexture> textures;
 
   for (unsigned int i = 0; i < mesh->mNumVertices; i++) {
     Vertex vertex;
@@ -65,6 +67,12 @@ void AssimpLoader::processMesh(const aiMesh* mesh) {
       vertex.TexCoords = glm::vec2(0.0f, 0.0f);
     }
 
+    vertex.Color = glm::vec3(0.8f, 0.1f, 0.4f);
+
+    aiMaterial *material = scene->mMaterials[mesh->mMaterialIndex];
+
+    this->loadTexture(material, aiTextureType_DIFFUSE, "texture_diffuse", textures);
+
     vertexes.push_back(vertex);
   }
 
@@ -78,6 +86,23 @@ void AssimpLoader::processMesh(const aiMesh* mesh) {
 
   m_Vertexes.push_back(vertexes);
   m_Indexes.push_back(indexes);
+  m_Textures.push_back(textures);
 
   std::cout << "vertices number: " << mesh->mNumVertices << ", indexes: " << indexes.size() << std::endl;
+}
+
+void AssimpLoader::loadTexture(const aiMaterial *material, aiTextureType type, std::string typeName, std::map<std::string, MeshTexture> &textures) {
+  for (unsigned int i = 0; i < material->GetTextureCount(type); i++) {
+    aiString path;
+    material->GetTexture(type, i, &path);
+
+    MeshTexture texture;
+
+    std::string fullpath = m_Directory + "/" + path.C_Str();
+
+    texture.path = fullpath;
+    texture.type = typeName;
+
+    textures[fullpath] = texture;
+  }
 }
