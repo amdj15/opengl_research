@@ -67,11 +67,10 @@ void AssimpLoader::processMesh(const aiMesh* mesh, const aiScene *scene) {
       vertex.TexCoords = glm::vec2(0.0f, 0.0f);
     }
 
-    vertex.Color = glm::vec3(0.8f, 0.1f, 0.4f);
-
     aiMaterial *material = scene->mMaterials[mesh->mMaterialIndex];
 
-    this->loadTexture(material, aiTextureType_DIFFUSE, "texture_diffuse", textures);
+    this->loadTexture(material, aiTextureType_DIFFUSE, "texture_diffuse", textures, 0);
+    this->loadTexture(material, aiTextureType_HEIGHT, "texture_normals", textures, 1);
 
     vertexes.push_back(vertex);
   }
@@ -91,17 +90,17 @@ void AssimpLoader::processMesh(const aiMesh* mesh, const aiScene *scene) {
   std::cout << "vertices number: " << mesh->mNumVertices << ", indexes: " << indexes.size() << std::endl;
 }
 
-void AssimpLoader::loadTexture(const aiMaterial *material, aiTextureType type, std::string typeName, std::map<std::string, MeshTexture> &textures) {
+void AssimpLoader::loadTexture(const aiMaterial *material, aiTextureType type, std::string typeName, std::map<std::string, MeshTexture> &textures, unsigned int slot) {
   for (unsigned int i = 0; i < material->GetTextureCount(type); i++) {
     aiString path;
     material->GetTexture(type, i, &path);
 
-    MeshTexture texture;
-
     std::string fullpath = m_Directory + "/" + path.C_Str();
 
+    MeshTexture texture;
     texture.path = fullpath;
     texture.type = typeName;
+    texture.slot = slot;
 
     textures[fullpath] = texture;
   }

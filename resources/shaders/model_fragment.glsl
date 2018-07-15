@@ -6,12 +6,12 @@ in vec2 v_TexCoords;
 in vec3 v_SurfaceNormal;
 in vec3 v_ToLightVector;
 in vec3 v_ToCamerVector;
-in vec3 v_Color;
 
 uniform vec4 u_Color;
 uniform vec3 u_LightColor;
 
-uniform sampler2D texture_diffuse1;
+uniform sampler2D texture_diffuse;
+uniform sampler2D texture_normals;
 
 void main()
 {
@@ -44,5 +44,5 @@ void main()
 
   // result
   vec3 resultColor = (ambientLight + diffuseLight + specularLight);
-  outColor = texture(texture_diffuse1, v_TexCoords) * vec4(resultColor, 1.0f);
+  outColor = texture(texture_diffuse, v_TexCoords) * vec4(resultColor, 1.0f);
 }

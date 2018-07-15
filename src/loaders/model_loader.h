@@ -20,6 +20,7 @@ struct Vertex {
 struct MeshTexture {
   std::string type;
   std::string path;
+  unsigned int slot;
 };
 
 class ModelLoader {

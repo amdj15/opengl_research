@@ -55,28 +55,17 @@ int main() {
     modelShader,
   };
 
-  std::size_t modelsNumber = 3;
+  std::size_t modelsNumber = 2;
 
-  Model *cube = new Model("./cube.obj");
   Model *sphere = new Model("./sphere.obj");
-  Model *man = new Model("./muro.obj");
-  Model *table = new Model("./table.obj");
   Model *house = new Model("./house/farmhouse_obj.obj");
-  Model *dragon = new Model("./dragon.obj");
 
-  // cube->Load();
-  sphere->Load();
-  // man->Load();
-  // table->Load();
   house->Load();
-  // dragon->Load();
+  sphere->Load();
 
   Model *models = new Model[modelsNumber];
   models[0] = *sphere;
   models[1] = *house;
-  // models[2] = *cube;
-  // models[3] = *man;
-  // models[4] = *dragon;
 
   glm::vec3 lightPosition = glm::vec3(0.0f, 0.0f, -15.0f);
   glm::vec3 lightColor = glm::vec3(1.0f, 1.0f, 1.0f);
@@ -103,7 +92,16 @@ int main() {
   modelShader->setUniformMatrix4fv("u_Projection", glm::value_ptr(projection));
   modelShader->setUniform3f("u_LightColor", lightColor.x, lightColor.y, lightColor.z);
 
-  modelShader->setUniform1i("texture_diffuse1", 0);
+  for(unsigned int i = 0; i < house->getMeshes().size(); i++) {
+    Mesh *mesh = house->getMeshes()[i];
+    std::map<std::string, Texture*> textures = mesh->GetTextures();
+
+    textures["texture_diffuse"]->bind(0);
+    modelShader->setUniform1i("texture_diffuse", 0);
+
+    textures["texture_normals"]->bind(1);
+    modelShader->setUniform1i("texture_normals", 0);
+  }
 
   lightSourceShader->bind();
   lightSourceShader->setUniform3f("u_LightColor", lightColor.x, lightColor.y, lightColor.z);
@@ -176,11 +174,7 @@ int main() {
   delete modelShader;
   delete lightSourceShader;
 
-  delete dragon;
   delete sphere;
-  delete cube;
-  delete man;
-  delete table;
   delete house;
 
   return 0;
@@ -221,8 +215,6 @@ static void mouseCallback(GLFWwindow* window, double xpos, double ypos) {
 
   mousePositions.lastX = xpos;
   mousePositions.lastY = ypos;
-
-  // std::cout << "x, y offsetts: " << xoffset << ", " << yoffset << std::endl;
 
   camera.processMouseMovement(xoffset, yoffset);
 }

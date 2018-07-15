@@ -36,10 +36,6 @@ void Mesh::setupMesh() {
 
     vertexesData.push_back(m_Vertices[i].TexCoords.x);
     vertexesData.push_back(m_Vertices[i].TexCoords.y);
-
-    vertexesData.push_back(m_Vertices[i].Color.x);
-    vertexesData.push_back(m_Vertices[i].Color.y);
-    vertexesData.push_back(m_Vertices[i].Color.z);
   }
 
   VertexBuffer vbo(&vertexesData[0], sizeof(float) * vertexesData.size());
@@ -48,15 +44,12 @@ void Mesh::setupMesh() {
   layout.push(3);
   layout.push(3);
   layout.push(2);
-  layout.push(3);
 
   m_VAO.addBuffer(vbo, layout);
 
   for (std::map<std::string, MeshTexture>::iterator it = m_MeshTextureStructs.begin(); it != m_MeshTextureStructs.end(); it++) {
     Texture *texture = new Texture(it->first);
-    texture->bind(0);
-
-    m_Textures[it->first] = texture;
+    m_Textures[it->second.type] = texture;
   }
 
   vbo.unbind();

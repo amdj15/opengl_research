@@ -31,5 +31,7 @@ class Mesh {
     inline IndexBuffer GetIbo() const {
       return m_IBO;
     }
+
+    inline const std::map<std::string, Texture*> GetTextures() const { return m_Textures; }
 };
 
