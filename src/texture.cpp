@@ -2,6 +2,7 @@
 #include <stb_image/stb_image.h>
 #include "texture.h"
 #include "renderer.h"
+#include <iostream>
 
 Texture::Texture(const std::string &path):
   m_RendererId(0), m_FilePath(path), m_LocalBuffer(nullptr),
@@ -9,6 +10,11 @@ Texture::Texture(const std::string &path):
 {
   stbi_set_flip_vertically_on_load(1);
   m_LocalBuffer = stbi_load(path.c_str(), &m_Width, &m_Height, &m_BPP, 4);
+
+  if (!m_LocalBuffer) {
+    std::cout << "Texture failed to load at path: " << path << std::endl;
+    exit(1);
+  }
 
   GLCall(glGenTextures(1, &m_RendererId));
   GLCall(glBindTexture(GL_TEXTURE_2D, m_RendererId));

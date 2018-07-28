@@ -14,6 +14,7 @@ IndexBuffer::IndexBuffer(){
 }
 
 IndexBuffer::~IndexBuffer() {
+  // TODO: FIX IT!!!
   // GLCall(glDeleteBuffers(1, &m_RendererId));
 }
 

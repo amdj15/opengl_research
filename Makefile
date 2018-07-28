@@ -25,7 +25,7 @@ all: compile
 	$(CC) $(LIBNAME) $(LIBDIR) -o $(DIST)/$(PRGNAME) *.o
 
 compile:
-	$(CC) $(CFLAGS) $(INCLUDES) $(DEFINE) src/$(FILES)
+	$(CC) $(CFLAGS) $(INCLUDES) $(DEFINE) src/loaders/$(FILES) src/$(FILES)
 
 clean:
 	rm -rf *.o $(DIST)

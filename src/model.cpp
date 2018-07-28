@@ -1,78 +1,66 @@
 #include "model.h"
+#include "loaders/assimp_loader.h"
+#include <iostream>
 
-#include <assimp/Importer.hpp>
-#include <assimp/postprocess.h>
-#include <iostream>
-#include <vector>
-#include <iostream>
+std::ostream& operator<<(std::ostream& os, const Mesh &m) {
+  os << "Indexes size: " << m.m_Indices.size() << std::endl;
+  os << "Vertexes size: " << m.m_Vertices.size() << std::endl;
+
+  os << "Indexes array: {" << std::endl;
+
+  for (unsigned int i = 0; i < m.m_Indices.size(); i++) {
+    os << "  " << m.m_Indices[i] << ", ";
+  }
+
+  os << "\n}" << std::endl;
+  os << "Vetexes: {" << std::endl;
+
+  for (unsigned int i = 0; i < m.m_Vertices.size(); i++) {
+    os << "  " << m.m_Vertices[i].Position.x << ", "
+       << m.m_Vertices[i].Position.y << ", "
+       << m.m_Vertices[i].Position.z << ", "
+       << m.m_Vertices[i].Normal.x << ", "
+       << m.m_Vertices[i].Normal.y << ", "
+       << m.m_Vertices[i].Normal.z;
+
+    os << std::endl;
+  }
+
+  os << "}" << std::endl;
+
+  return os;
+}
+
+Model::Model() {}
 
 Model::Model(const std::string pathToFile): m_PathToFile(pathToFile) {
   m_Directory = pathToFile.substr(0, pathToFile.find_last_of('/'));
+  m_Loader = new AssimpLoader(pathToFile, m_Directory);
+}
+
+Model::~Model() {
+  delete m_Loader;
+
+  std::cout << "Delete model " << m_PathToFile << std::endl;
+
+  for (unsigned int i = 0; i < m_Meshes.size(); i++) {
+    delete m_Meshes[i];
+  }
 }
 
 void Model::Load() {
-  Assimp::Importer importer;
-  const aiScene* scene = importer.ReadFile(m_PathToFile, aiProcess_Triangulate | aiProcess_FlipUVs);
+  m_Loader->Load();
 
-  if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) {
-    std::cout << "ERROR::ASSIMP::" << importer.GetErrorString() << std::endl;
-    return;
+  std::vector<std::vector<Vertex> > vertexes = m_Loader->GetVertexes();
+  std::vector<std::vector<unsigned int> > indexes = m_Loader->GetIndexes();
+  std::vector<std::map<std::string, MeshTexture> > textures = m_Loader->GetTextures();
+  std::size_t cnt = vertexes.size();
+
+  for (unsigned int i = 0; i < cnt; i++) {
+    Mesh *mesh = new Mesh(vertexes[i], indexes[i], textures[i]);
+    m_Meshes.push_back(mesh);
   }
 
-  processNode(scene->mRootNode, scene);
+  std::cout << "Model has " << m_Meshes.size() << " meshses" << std::endl;
 }
 
-void Model::processNode(const aiNode* node, const aiScene* scene) {
-  for (unsigned int i = 0; i < node->mNumMeshes; i++) {
-    aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
-    m_Meshes.push_back(processMesh(mesh));
-  }
-
-  for (unsigned int i = 0; i < node->mNumChildren; i ++) {
-    processNode(node->mChildren[i], scene);
-  }
-}
-
-Mesh Model::processMesh(const aiMesh* mesh) {
-  std::vector<Vertex> vertices;
-  std::vector<unsigned int> indices;
-
-  std::cout << "vertices number: " << mesh->mNumVertices << std::endl;
-
-  for (unsigned int i = 0; i < mesh->mNumVertices; i++) {
-    Vertex vertex;
-
-    glm::vec3 position;
-    position.x = mesh->mVertices[i].x;
-    position.y = mesh->mVertices[i].y;
-    position.z = mesh->mVertices[i].z;
-    vertex.Position = position;
-
-    glm::vec3 normal;
-    normal.x = mesh->mNormals[i].x;
-    normal.y = mesh->mNormals[i].y;
-    normal.z = mesh->mNormals[i].z;
-    vertex.Normal = normal;
-
-    if (mesh->mTextureCoords[0]) {
-      glm::vec2 vec;
-      vec.x = mesh->mTextureCoords[0][i].x;
-      vec.y = mesh->mTextureCoords[0][i].y;
-      vertex.TexCoords = vec;
-    } else {
-      vertex.TexCoords = glm::vec2(0.0f, 0.0f);
-    }
-
-    vertices.push_back(vertex);
-  }
-
-  for(unsigned int i = 0; i < mesh->mNumFaces; i++) {
-    aiFace face = mesh->mFaces[i];
-    // retrieve all indices of the face and store them in the indices vector
-    for(unsigned int j = 0; j < face.mNumIndices; j++) {
-      indices.push_back(face.mIndices[j]);
-    }
-  }
-
-  return Mesh(vertices, indices);
-}

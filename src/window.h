@@ -11,9 +11,11 @@ class Window {
     std::string m_Title;
     bool m_InitSuccess;
     std::string m_InitErrorString;
+    GLFWmonitor* m_Monitor;
 
   public:
     Window(unsigned int width, unsigned int height, std::string title);
+    Window(std::string title);
     ~Window();
 
     bool isOpen();
@@ -31,4 +33,7 @@ class Window {
     inline GLFWwindow* getGlfwWindow() const {
       return m_Window;
     }
+
+  private:
+    void init();
 };

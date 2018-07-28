@@ -32,67 +32,92 @@ Camera camera;
 
 int main() {
   // TODO: check intitialization errors
-  Window window(1100, 900, "Cubes");
+  Window window("Cubes");
   glfwSetCursorPosCallback(window.getGlfwWindow(), mouseCallback);
 
   mousePositions.lastX = window.getWidth() / 2.0f;
   mousePositions.lastY = window.getHeight() / 2.0f;
   mousePositions.isFirstMouse = true;
 
-  GLCall(glEnable(GL_BLEND));
-  GLCall(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
-  GLCall(glEnable(GL_DEPTH_TEST));
-
   Renderer renderer;
 
   float lastTime = 0.0f;
   float deltaTime = 0.0f;
 
-  Model cube("./cube.obj");
-  cube.Load();
-
-  Model sphere("./sphere.obj");
-  sphere.Load();
-
-  Model dragon("./dragon.obj");
-  dragon.Load();
-
-  Model models[] = {
-    sphere,
-    dragon,
-    cube,
-  };
-
   ShaderProgram *modelShader = loadShader("model");
+  ShaderProgram *lightSourceShader = loadShader("light_source");
 
   ShaderProgram* shaders[] = {
-    loadShader("light_source"),
+    lightSourceShader,
+    modelShader,
+    modelShader,
     modelShader,
     modelShader,
   };
+
+  std::size_t modelsNumber = 2;
+
+  Model *sphere = new Model("./sphere.obj");
+  Model *house = new Model("./house_2/WoodenCabinObj.obj");
+
+  house->Load();
+  sphere->Load();
+
+  Model *models = new Model[modelsNumber];
+  models[0] = *sphere;
+  models[1] = *house;
 
   glm::vec3 lightPosition = glm::vec3(0.0f, 0.0f, -15.0f);
   glm::vec3 lightColor = glm::vec3(1.0f, 1.0f, 1.0f);
 
   glm::vec3 positions[] = {
     lightPosition,
-    glm::vec3(0.0f, -10.0f, -15.0f),
-    glm::vec3(0.0f, -15.0f, -25.0f),
+    glm::vec3(0.0f, -13.5f, -15.0f),
+    glm::vec3(-25.0f, -15.0f, -25.0f),
+    glm::vec3(-10.0f, -13.5f, -20.0f),
+    glm::vec3(10.0f, -13.5f, -10.0f),
   };
 
   glm::vec3 scales[] = {
-    glm::vec3(1.0f),
     glm::vec3(2.0f),
+    glm::vec3(0.2f),
     glm::vec3(50.0f, 1.0f, 50.0f),
+    glm::vec3(0.03f),
+    glm::vec3(0.1f),
   };
+
+  glm::mat4 projection = glm::perspective(glm::radians(45.0f), window.getWidth() / window.getHeight(), 1.0f, 1000.0f);
+
+  modelShader->bind();
+  modelShader->setUniformMatrix4fv("u_Projection", glm::value_ptr(projection));
+  modelShader->setUniform3f("u_LightColor", lightColor.x, lightColor.y, lightColor.z);
+
+  for(unsigned int i = 0; i < house->getMeshes().size(); i++) {
+    Mesh *mesh = house->getMeshes()[i];
+    std::map<std::string, Texture*> textures = mesh->GetTextures();
+
+    textures["texture_diffuse"]->bind(0);
+    modelShader->setUniform1i("texture_diffuse", 0);
+
+    textures["texture_specular"]->bind(1);
+    modelShader->setUniform1i("texture_specular", 1);
+
+    textures["texture_normal"]->bind(2);
+    modelShader->setUniform1i("texture_normal", 2);
+  }
+
+  lightSourceShader->bind();
+  lightSourceShader->setUniform3f("u_LightColor", lightColor.x, lightColor.y, lightColor.z);
+  lightSourceShader->setUniformMatrix4fv("u_Projection", glm::value_ptr(projection));
+
+  unsigned int activeShaderId;
 
   /* Loop until the user closes the window */
   while (window.isOpen()) {
     float currentTime = glfwGetTime();
     deltaTime = currentTime - lastTime;
     lastTime = currentTime;
-
-    std::cout << "Time: " << deltaTime << std::endl;
+    unsigned int drawCallsCnt = 0;
 
     /* Render here */
     renderer.clear();
@@ -100,17 +125,23 @@ int main() {
     processInput(window.getGlfwWindow(), camera, deltaTime);
 
     glm::mat4 view = camera.getViewMatrix();
-    glm::mat4 projection = glm::perspective(glm::radians(45.0f), window.getWidth() / window.getHeight(), 1.0f, 1000.0f);
     glm::vec3 cameraPosition = camera.GetPosition();
 
-    for (unsigned i = 0; i < 3; i++) {
-      Model model = models[i];
+    for (unsigned int i = 0; i < 2; i++) {
+      ShaderProgram* shader = shaders[i];
+
+      shader->bind();
+      shader->setUniform3f("u_CameraPosition", cameraPosition.x, cameraPosition.y, cameraPosition.z);
+      shader->setUniform3f("u_LightPosition", lightPosition.x, lightPosition.y, lightPosition.z);
+    }
+
+    for (unsigned int i = 0; i < modelsNumber; i++) {
       ShaderProgram* shaderPr = shaders[i];
 
       glm::mat4 modelMat(1.0f);
 
       if (i == 0) {
-        glm::vec3 position = rotateAroundPoint(currentTime, 15, positions[i]);
+        glm::vec3 position = rotateAroundPoint(35, 15, positions[i]);
         lightPosition = position;
 
         modelMat = glm::translate(glm::mat4(1.0f), position);
@@ -119,17 +150,18 @@ int main() {
         modelMat = glm::scale(modelMat, scales[i]);
       }
 
-      shaderPr->bind();
+      if (activeShaderId != shaderPr->getId()) {
+        shaderPr->bind();
+        activeShaderId = shaderPr->getId();
+      }
+
       shaderPr->setUniformMatrix4fv("u_View", glm::value_ptr(view));
-      shaderPr->setUniformMatrix4fv("u_Projection", glm::value_ptr(projection));
       shaderPr->setUniformMatrix4fv("u_Model", glm::value_ptr(modelMat));
 
-      shaderPr->setUniform3f("u_CameraPosition", cameraPosition.x, cameraPosition.y, cameraPosition.z);
-      shaderPr->setUniform3f("u_LightPosition", lightPosition.x, lightPosition.y, lightPosition.z);
-      shaderPr->setUniform3f("u_LightColor", lightColor.x, lightColor.y, lightColor.z);
+      for(unsigned int j = 0; j < models[i].getMeshes().size(); j++) {
+        drawCallsCnt++;
 
-      for(unsigned int j = 0; j < model.getMeshes().size(); j++) {
-        renderer.draw(model.getMeshes()[j].GetVao(), model.getMeshes()[j].GetIbo(), *shaderPr);
+        renderer.draw(models[i].getMeshes()[j]->GetVao(), models[i].getMeshes()[j]->GetIbo(), *shaderPr);
       }
     }
 
@@ -138,11 +170,15 @@ int main() {
 
     /* Poll for and process events */
     window.pollEvents();
+
+    std::cout << "Time: " << deltaTime * 1000 << " ms, draw calls: " << drawCallsCnt << std::endl;
   }
 
-  for (int i = 0; i < 2; i++) {
-    delete shaders[i];
-  }
+  delete modelShader;
+  delete lightSourceShader;
+
+  delete sphere;
+  delete house;
 
   return 0;
 }
@@ -182,8 +218,6 @@ static void mouseCallback(GLFWwindow* window, double xpos, double ypos) {
 
   mousePositions.lastX = xpos;
   mousePositions.lastY = ypos;
-
-  std::cout << "x, y offsetts: " << xoffset << ", " << yoffset << std::endl;
 
   camera.processMouseMovement(xoffset, yoffset);
 }

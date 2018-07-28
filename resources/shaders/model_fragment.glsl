@@ -6,28 +6,31 @@ in vec2 v_TexCoords;
 in vec3 v_SurfaceNormal;
 in vec3 v_ToLightVector;
 in vec3 v_ToCamerVector;
+in mat3 v_TBN;
 
 uniform vec4 u_Color;
 uniform vec3 u_LightColor;
 
-uniform sampler2D u_TextureBg;
-uniform sampler2D u_TextureTag;
+uniform sampler2D texture_diffuse;
+uniform sampler2D texture_specular;
+uniform sampler2D texture_normal;
 
 void main()
 {
-  vec3 color = vec3(0.4, 0.1, 0.7);
+  vec3 unitNormal = texture(texture_normal, v_TexCoords).rgb;
+  unitNormal = normalize(unitNormal * 2.0 - 1.0);
+  unitNormal = normalize(v_TBN * unitNormal);
 
   // ambient light
   float ambientStength = 0.1f;
-  vec3 ambientLight = u_LightColor * ambientStength;
+  vec3 ambientLight = u_LightColor * ambientStength * texture(texture_diffuse, v_TexCoords).rgb;
 
   // diffused light
-  vec3 unitNormal = normalize(v_SurfaceNormal);
   vec3 unitLightVector = normalize(v_ToLightVector);
   float dotProduct = dot(unitNormal, unitLightVector);
   float brightness = max(dotProduct, 0.0f);
 
-  vec3 diffuseLight = brightness * u_LightColor;
+  vec3 diffuseLight = brightness * u_LightColor * texture(texture_diffuse, v_TexCoords).rgb;
 
   // specular ligth
   float reflectivity = 1.0f;
@@ -35,16 +38,16 @@ void main()
 
   float damperFactor = 0.0f;
   if (brightness > 0.0f) {
-    vec3 unitToCameraVector = normalize(v_ToLightVector);
+    vec3 unitToCameraVector = normalize(v_ToCamerVector);
     vec3 lightDirection = -unitLightVector;
     vec3 reflectedLightDirection = reflect(lightDirection, unitNormal);
     float specularFactor = max(dot(reflectedLightDirection, unitToCameraVector), 0.0f);
     damperFactor = pow(specularFactor, shineDamper);
   }
 
-  vec3 specularLight = damperFactor * reflectivity * u_LightColor;
+  vec3 specularLight = damperFactor * reflectivity * u_LightColor * texture(texture_specular, v_TexCoords).rgb;
 
   // result
-  vec3 resultColor = (ambientLight + diffuseLight + specularLight) * color;
+  vec3 resultColor = ambientLight + diffuseLight + specularLight;
   outColor = vec4(resultColor, 1.0f);
 }
