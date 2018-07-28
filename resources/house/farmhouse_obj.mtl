@@ -4,5 +4,6 @@ Kd 0.00 0.00 0.00
 Ka 0.00 0.00 0.00
 Tf 1.00 1.00 1.00
 map_Kd FarmhouseTexture.jpg
-bump FarmhouseTextureBumpMap.jpg
+map_Ks FarmhouseTextureBumpMap.jpg
+bump NormalMap.png
 Ni 1.00

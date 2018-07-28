@@ -36,6 +36,10 @@ void Mesh::setupMesh() {
 
     vertexesData.push_back(m_Vertices[i].TexCoords.x);
     vertexesData.push_back(m_Vertices[i].TexCoords.y);
+
+    vertexesData.push_back(m_Vertices[i].Tangent.x);
+    vertexesData.push_back(m_Vertices[i].Tangent.y);
+    vertexesData.push_back(m_Vertices[i].Tangent.z);
   }
 
   VertexBuffer vbo(&vertexesData[0], sizeof(float) * vertexesData.size());
@@ -44,6 +48,7 @@ void Mesh::setupMesh() {
   layout.push(3);
   layout.push(3);
   layout.push(2);
+  layout.push(3);
 
   m_VAO.addBuffer(vbo, layout);
 

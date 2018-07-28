@@ -12,6 +12,7 @@ void AssimpLoader::Load() {
   Assimp::Importer importer;
   const aiScene *scene = importer.ReadFile(m_PathToFile, aiProcess_Triangulate |
                                                          // aiProcess_FlipUVs |
+                                                         aiProcess_CalcTangentSpace |
                                                          aiProcess_GenNormals |
                                                          aiProcess_JoinIdenticalVertices |
                                                          aiProcess_OptimizeGraph |
@@ -67,10 +68,20 @@ void AssimpLoader::processMesh(const aiMesh* mesh, const aiScene *scene) {
       vertex.TexCoords = glm::vec2(0.0f, 0.0f);
     }
 
+    // tangent
+    glm::vec3 tangent;
+
+    tangent.x = mesh->mTangents[i].x;
+    tangent.y = mesh->mTangents[i].y;
+    tangent.z = mesh->mTangents[i].z;
+
+    vertex.Tangent = tangent;
+
     aiMaterial *material = scene->mMaterials[mesh->mMaterialIndex];
 
     this->loadTexture(material, aiTextureType_DIFFUSE, "texture_diffuse", textures, 0);
-    this->loadTexture(material, aiTextureType_HEIGHT, "texture_normals", textures, 1);
+    this->loadTexture(material, aiTextureType_SPECULAR, "texture_specular", textures, 1);
+    this->loadTexture(material, aiTextureType_HEIGHT, "texture_normal", textures, 2);
 
     vertexes.push_back(vertex);
   }

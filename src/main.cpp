@@ -58,10 +58,10 @@ int main() {
   std::size_t modelsNumber = 2;
 
   Model *sphere = new Model("./sphere.obj");
-  Model *house = new Model("./house/farmhouse_obj.obj");
+  Model *house = new Model("./house_2/WoodenCabinObj.obj");
 
   house->Load();
-  sphere->Load();
+  // sphere->Load();
 
   Model *models = new Model[modelsNumber];
   models[0] = *sphere;
@@ -80,7 +80,7 @@ int main() {
 
   glm::vec3 scales[] = {
     glm::vec3(2.0f),
-    glm::vec3(0.5f),
+    glm::vec3(0.2f),
     glm::vec3(50.0f, 1.0f, 50.0f),
     glm::vec3(0.03f),
     glm::vec3(0.1f),
@@ -99,8 +99,11 @@ int main() {
     textures["texture_diffuse"]->bind(0);
     modelShader->setUniform1i("texture_diffuse", 0);
 
-    textures["texture_normals"]->bind(1);
-    modelShader->setUniform1i("texture_normals", 0);
+    textures["texture_specular"]->bind(1);
+    modelShader->setUniform1i("texture_specular", 1);
+
+    textures["texture_normal"]->bind(2);
+    modelShader->setUniform1i("texture_normal", 2);
   }
 
   lightSourceShader->bind();
@@ -138,7 +141,7 @@ int main() {
       glm::mat4 modelMat(1.0f);
 
       if (i == 0) {
-        glm::vec3 position = rotateAroundPoint(currentTime, 15, positions[i]);
+        glm::vec3 position = rotateAroundPoint(35, 15, positions[i]);
         lightPosition = position;
 
         modelMat = glm::translate(glm::mat4(1.0f), position);
