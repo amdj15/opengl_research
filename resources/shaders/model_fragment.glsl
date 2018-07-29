@@ -3,10 +3,11 @@
 out vec4 outColor;
 
 in vec2 v_TexCoords;
-in vec3 v_SurfaceNormal;
-in vec3 v_ToLightVector;
-in vec3 v_ToCamerVector;
-in mat3 v_TBN;
+
+in v_TangentSpace {
+  vec3 toLightVector;
+  vec3 toCameraVector;
+} ts;
 
 uniform vec4 u_Color;
 uniform vec3 u_LightColor;
@@ -19,14 +20,13 @@ void main()
 {
   vec3 unitNormal = texture(texture_normal, v_TexCoords).rgb;
   unitNormal = normalize(unitNormal * 2.0 - 1.0);
-  unitNormal = normalize(v_TBN * unitNormal);
 
   // ambient light
   float ambientStength = 0.1f;
   vec3 ambientLight = u_LightColor * ambientStength * texture(texture_diffuse, v_TexCoords).rgb;
 
   // diffused light
-  vec3 unitLightVector = normalize(v_ToLightVector);
+  vec3 unitLightVector = normalize(ts.toLightVector);
   float dotProduct = dot(unitNormal, unitLightVector);
   float brightness = max(dotProduct, 0.0f);
 
@@ -38,7 +38,7 @@ void main()
 
   float damperFactor = 0.0f;
   if (brightness > 0.0f) {
-    vec3 unitToCameraVector = normalize(v_ToCamerVector);
+    vec3 unitToCameraVector = normalize(ts.toCameraVector);
     vec3 lightDirection = -unitLightVector;
     vec3 reflectedLightDirection = reflect(lightDirection, unitNormal);
     float specularFactor = max(dot(reflectedLightDirection, unitToCameraVector), 0.0f);

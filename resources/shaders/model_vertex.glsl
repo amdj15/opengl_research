@@ -6,10 +6,11 @@ layout(location = 2) in vec2 texCoords;
 layout(location = 3) in vec3 tangent;
 
 out vec2 v_TexCoords;
-out vec3 v_SurfaceNormal;
-out vec3 v_ToLightVector;
-out vec3 v_ToCamerVector;
-out mat3 v_TBN;
+
+out v_TangentSpace {
+  vec3 toLightVector;
+  vec3 toCameraVector;
+} tangentSpace;
 
 uniform mat4 u_Model;
 uniform mat4 u_View;
@@ -20,17 +21,21 @@ uniform vec3 u_CameraPosition;
 void main()
 {
   vec4 worldPosition = u_Model * vec4(position, 1.0);
-  gl_Position = u_Projection * u_View * worldPosition;
-
-  v_TexCoords = texCoords;
-  v_SurfaceNormal = (u_Model * vec4(normal, 0.0)).xyz;
-  v_ToLightVector = u_LightPosition - worldPosition.xyz;
-  v_ToCamerVector = u_CameraPosition - worldPosition.xyz;
 
   // Tangent space matrix
   vec3 T = normalize(vec3(u_Model * vec4(tangent, 0.0)));
   vec3 N = normalize(vec3(u_Model * vec4(normal, 0.0)));
   vec3 B = cross(N, T);
 
-  v_TBN = mat3(T, B, N);
+  mat3 TBN = transpose(mat3(T, B, N));
+
+  vec3 worldPositionTBN = TBN * worldPosition.xyz;
+  vec3 lightPositionTBN = TBN * u_LightPosition;
+  vec3 cameraPositionTBN = TBN * u_CameraPosition;
+
+  gl_Position = u_Projection * u_View * worldPosition;
+
+  v_TexCoords = texCoords;
+  tangentSpace.toLightVector = lightPositionTBN - worldPositionTBN;
+  tangentSpace.toCameraVector = cameraPositionTBN - worldPositionTBN;
 }
