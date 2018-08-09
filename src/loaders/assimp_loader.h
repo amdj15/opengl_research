@@ -15,4 +15,5 @@ class AssimpLoader : public ModelLoader {
     void processMesh(const aiMesh* mesh, const aiScene *scene);
     void processNode(const aiNode* node, const aiScene *scene);
     bool loadTexture(const aiMaterial *material, aiTextureType type, std::string typeName, std::map<std::string, MeshTexture> &textures, unsigned int slot);
+    MeshMaterials processMaterials(aiMaterial *material);
 };

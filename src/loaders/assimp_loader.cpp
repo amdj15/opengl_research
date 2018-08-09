@@ -44,6 +44,8 @@ void AssimpLoader::processMesh(const aiMesh* mesh, const aiScene *scene) {
   std::vector<Vertex> vertexes;
   std::map<std::string, MeshTexture> textures;
 
+  aiMaterial *material = scene->mMaterials[mesh->mMaterialIndex];
+
   for (unsigned int i = 0; i < mesh->mNumVertices; i++) {
     Vertex vertex;
 
@@ -67,8 +69,6 @@ void AssimpLoader::processMesh(const aiMesh* mesh, const aiScene *scene) {
     } else {
       vertex.TexCoords = glm::vec2(0.0f, 0.0f);
     }
-
-    aiMaterial *material = scene->mMaterials[mesh->mMaterialIndex];
 
     this->loadTexture(material, aiTextureType_DIFFUSE, "texture_diffuse", textures, 0);
     this->loadTexture(material, aiTextureType_SPECULAR, "texture_specular", textures, 1);
@@ -99,6 +99,7 @@ void AssimpLoader::processMesh(const aiMesh* mesh, const aiScene *scene) {
   m_Vertexes.push_back(vertexes);
   m_Indexes.push_back(indexes);
   m_Textures.push_back(textures);
+  m_Materials.push_back(this->processMaterials(material));
 
   std::cout << "vertices number: " << mesh->mNumVertices << ", indexes: " << indexes.size() << std::endl;
 }
@@ -119,4 +120,13 @@ bool AssimpLoader::loadTexture(const aiMaterial *material, aiTextureType type, s
   }
 
   return material->GetTextureCount(type) > 0;
+}
+
+MeshMaterials AssimpLoader::processMaterials(aiMaterial *material) {
+  MeshMaterials meshMaterials;
+
+  material->Get(AI_MATKEY_SHININESS, meshMaterials.shininess);
+  material->Get(AI_MATKEY_SHININESS_STRENGTH, meshMaterials.shininessStrength);
+
+  return meshMaterials;
 }

@@ -9,12 +9,18 @@ in v_TangentSpace {
   vec3 toCameraVector;
 } ts;
 
-uniform vec4 u_Color;
+struct Material {
+  float shininess;
+  float specularStrength;
+};
+
 uniform vec3 u_LightColor;
 
 uniform sampler2D texture_diffuse;
 uniform sampler2D texture_specular;
 uniform sampler2D texture_normal;
+
+uniform Material material;
 
 void main()
 {
@@ -33,19 +39,16 @@ void main()
   vec3 diffuseLight = brightness * u_LightColor * texture(texture_diffuse, v_TexCoords).rgb;
 
   // specular ligth
-  float reflectivity = 1.0f;
-  float shineDamper = 10.f;
-
   float damperFactor = 0.0f;
   if (brightness > 0.0f) {
     vec3 unitToCameraVector = normalize(ts.toCameraVector);
     vec3 lightDirection = -unitLightVector;
     vec3 reflectedLightDirection = reflect(lightDirection, unitNormal);
     float specularFactor = max(dot(reflectedLightDirection, unitToCameraVector), 0.0f);
-    damperFactor = pow(specularFactor, shineDamper);
+    damperFactor = pow(specularFactor, material.shininess);
   }
 
-  vec3 specularLight = damperFactor * reflectivity * u_LightColor * texture(texture_specular, v_TexCoords).rgb;
+  vec3 specularLight = material.specularStrength * damperFactor * u_LightColor * texture(texture_specular, v_TexCoords).rgb;
 
   // result
   vec3 resultColor = ambientLight + diffuseLight + specularLight;

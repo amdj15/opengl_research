@@ -23,6 +23,11 @@ struct MeshTexture {
   unsigned int slot;
 };
 
+struct MeshMaterials {
+  float shininess;
+  float shininessStrength;
+};
+
 class ModelLoader {
   protected:
     std::string m_PathToFile;
@@ -30,6 +35,7 @@ class ModelLoader {
     std::vector<std::vector<Vertex> > m_Vertexes;
     std::vector<std::vector<unsigned int> > m_Indexes;
     std::vector<std::map<std::string, MeshTexture> > m_Textures;
+    std::vector<MeshMaterials> m_Materials;
 
   public:
     virtual ~ModelLoader() {};
@@ -38,4 +44,5 @@ class ModelLoader {
     inline const std::vector<std::vector<Vertex> > GetVertexes() const { return m_Vertexes; }
     inline const std::vector<std::vector<unsigned int> > GetIndexes() const { return m_Indexes; }
     inline const std::vector<std::map<std::string, MeshTexture> > GetTextures() const { return m_Textures; }
+    inline const std::vector<MeshMaterials> GetMaterials() const { return m_Materials; }
 };

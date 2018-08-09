@@ -104,6 +104,9 @@ int main() {
 
     textures["texture_normal"]->bind(2);
     modelShader->setUniform1i("texture_normal", 2);
+
+    modelShader->setUniform1f("material.shininess", mesh->m_Materials.shininess);
+    modelShader->setUniform1f("material.specularStrength", mesh->m_Materials.shininessStrength);
   }
 
   lightSourceShader->bind();
@@ -141,7 +144,7 @@ int main() {
       glm::mat4 modelMat(1.0f);
 
       if (i == 0) {
-        glm::vec3 position = rotateAroundPoint(35, 15, positions[i]);
+        glm::vec3 position = rotateAroundPoint(currentTime, 15, positions[i]);
         lightPosition = position;
 
         modelMat = glm::translate(glm::mat4(1.0f), position);

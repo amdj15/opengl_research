@@ -14,9 +14,11 @@ class Mesh {
     std::vector<unsigned int> m_Indices;
     std::map<std::string, MeshTexture> m_MeshTextureStructs;
     std::map<std::string, Texture*> m_Textures;
+    MeshMaterials m_Materials;
 
     Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std::map<std::string, MeshTexture> meshTextureStructs);
     ~Mesh();
+
   private:
     VertexArray m_VAO;
     IndexBuffer m_IBO;
