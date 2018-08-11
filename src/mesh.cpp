@@ -9,6 +9,9 @@ Mesh::Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std:
   m_Indices(indices),
   m_MeshTextureStructs(textures)
 {
+  this->m_VAO = new VertexArray();
+  this->m_IBO = new IndexBuffer();
+
   setupMesh();
 }
 
@@ -18,10 +21,13 @@ Mesh::~Mesh() {
 
     delete it->second;
   }
+
+  delete m_VAO;
+  delete m_IBO;
 }
 
 void Mesh::setupMesh() {
-  m_IBO.SetData(&m_Indices[0], m_Indices.size());
+  m_IBO->SetData(&m_Indices[0], m_Indices.size());
 
   std::vector<float> vertexesData;
 
@@ -50,7 +56,7 @@ void Mesh::setupMesh() {
   layout.push(2);
   layout.push(3);
 
-  m_VAO.addBuffer(vbo, layout);
+  m_VAO->addBuffer(vbo, layout);
 
   for (std::map<std::string, MeshTexture>::iterator it = m_MeshTextureStructs.begin(); it != m_MeshTextureStructs.end(); it++) {
     Texture *texture = new Texture(it->first);
@@ -58,6 +64,6 @@ void Mesh::setupMesh() {
   }
 
   vbo.unbind();
-  m_VAO.unbind();
-  m_IBO.unbind();
+  m_VAO->unbind();
+  m_IBO->unbind();
 }

@@ -26,5 +26,5 @@ class Renderer {
   public:
     Renderer();
     void clear() const;
-    void draw(const VertexArray &vao, const IndexBuffer &ibo, const ShaderProgram &sh);
+    void draw(const VertexArray *vao, const IndexBuffer *ibo, const ShaderProgram &sh);
 };

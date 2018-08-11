@@ -14,8 +14,7 @@ IndexBuffer::IndexBuffer(){
 }
 
 IndexBuffer::~IndexBuffer() {
-  // TODO: FIX IT!!!
-  // GLCall(glDeleteBuffers(1, &m_RendererId));
+  GLCall(glDeleteBuffers(1, &m_RendererId));
 }
 
 void IndexBuffer::bind() const {
