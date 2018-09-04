@@ -25,7 +25,11 @@ all: compile
 	$(CC) $(LIBNAME) $(LIBDIR) -o $(DIST)/$(PRGNAME) *.o
 
 compile:
-	$(CC) $(CFLAGS) $(INCLUDES) $(DEFINE) src/loaders/$(FILES) src/$(FILES)
+	$(CC) $(CFLAGS) $(INCLUDES) $(DEFINE) src/loaders/$(FILES) \
+																				src/app/$(FILES) \
+																				src/graphic/api/$(FILES) \
+																				src/devices/opengl/$(FILES) \
+																				src/$(FILES)
 
 clean:
 	rm -rf *.o $(DIST)

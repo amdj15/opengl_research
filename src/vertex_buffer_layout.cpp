@@ -1,5 +1,5 @@
-#include <GL/glew.h>
 #include "vertex_buffer_layout.h"
+#include "devices/opengl/common.h"
 
 VertexBufferLayout::VertexBufferLayout(): m_Stride(0) {}
 VertexBufferLayout::~VertexBufferLayout(){}

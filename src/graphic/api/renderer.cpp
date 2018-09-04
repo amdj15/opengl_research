@@ -1,7 +1,8 @@
 #include <iostream>
-#include <GL/glew.h>
-
 #include "renderer.h"
+
+#include <GL/glew.h>
+#include "../../devices/opengl/common.h"
 
 void GLCleanError() {
   while(glGetError() != GL_NO_ERROR);

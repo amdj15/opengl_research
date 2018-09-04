@@ -1,7 +1,9 @@
 #include <gl/glew.h>
 #include "index_buffer.h"
-#include "renderer.h"
 #include <iostream>
+
+#include "graphic/api/renderer.h"
+#include "devices/opengl/common.h"
 
 IndexBuffer::IndexBuffer(const unsigned int* data, unsigned int count): m_Count(count) {
   GLCall(glGenBuffers(1, &m_RendererId));

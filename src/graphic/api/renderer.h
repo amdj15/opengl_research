@@ -1,17 +1,9 @@
 #pragma once
 
 #include <csignal>
-#include "vertex_array.h"
-#include "index_buffer.h"
-#include "shader_program.h"
-
-#define ASSERT(x) if ((x)) std::raise(SIGINT)
-
-#define GLCall(func) \
-  GLCleanError(); \
-  func;\
-  ASSERT(GLLogError(#func, __FILE__, __LINE__))
-
+#include "../../vertex_array.h"
+#include "../../index_buffer.h"
+#include "../../shader_program.h"
 
 void GLCleanError();
 

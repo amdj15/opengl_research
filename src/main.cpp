@@ -5,8 +5,8 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <math.h>
 
-#include "window.h"
-#include "renderer.h"
+#include "app/application.h"
+#include "graphic/api/renderer.h"
 #include "vertex_buffer.h"
 #include "index_buffer.h"
 #include "vertex_array.h"
@@ -32,12 +32,18 @@ Camera camera;
 
 int main() {
   // TODO: check intitialization errors
-  Window window("Cubes");
+  Application app("Engine");
+  app.Init();
+
+  Window window = app.GetWindow();
+
   glfwSetCursorPosCallback(window.getGlfwWindow(), mouseCallback);
 
   mousePositions.lastX = window.getWidth() / 2.0f;
   mousePositions.lastY = window.getHeight() / 2.0f;
   mousePositions.isFirstMouse = true;
+
+  // *************************************************************************
 
   Renderer renderer;
 
@@ -49,9 +55,6 @@ int main() {
 
   ShaderProgram* shaders[] = {
     lightSourceShader,
-    modelShader,
-    modelShader,
-    modelShader,
     modelShader,
   };
 
@@ -73,17 +76,11 @@ int main() {
   glm::vec3 positions[] = {
     lightPosition,
     glm::vec3(0.0f, -13.5f, -15.0f),
-    glm::vec3(-25.0f, -15.0f, -25.0f),
-    glm::vec3(-10.0f, -13.5f, -20.0f),
-    glm::vec3(10.0f, -13.5f, -10.0f),
   };
 
   glm::vec3 scales[] = {
     glm::vec3(2.0f),
     glm::vec3(0.2f),
-    glm::vec3(50.0f, 1.0f, 50.0f),
-    glm::vec3(0.03f),
-    glm::vec3(0.1f),
   };
 
   glm::mat4 projection = glm::perspective(glm::radians(45.0f), window.getWidth() / window.getHeight(), 1.0f, 1000.0f);

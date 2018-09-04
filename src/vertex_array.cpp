@@ -1,9 +1,9 @@
-#include <GL/glew.h>
-
-#include "renderer.h"
 #include "vertex_array.h"
 #include "vertex_buffer_layout.h"
 #include <iostream>
+
+#include "graphic/api/renderer.h"
+#include "devices/opengl/common.h"
 
 VertexArray::VertexArray() {
   GLCall(glGenVertexArrays(1, &m_RendererId));
