@@ -16,20 +16,30 @@ CFLAGS=-c -Wall -std=c++14
 
 DEFINE=-D GLEW_STATIC -D STB_IMAGE_IMPLEMENTATION
 
-DIST=./bin
-FILES=*.cpp
+DIST=bin
+SRC=src
+OBJ=obj
 
-all: compile
+SOURCE_FILES=$(wildcard $(SRC)/app/*.cpp) \
+						 $(wildcard $(SRC)/loaders/*.cpp) \
+						 $(wildcard $(SRC)/devices/opengl/*.cpp) \
+						 $(wildcard $(SRC)/graphic/api/*.cpp) \
+						 $(wildcard $(SRC)/*.cpp)
+
+OBJECT_FILES=$(SOURCE_FILES:%.cpp=$(OBJ)/%.o)
+
+EXECUTABLE=$(PRGNAME:%=$(DIST)/%)
+
+build: $(EXECUTABLE)
+
+$(EXECUTABLE): $(OBJECT_FILES)
 	mkdir -p $(DIST)
 	cp -a resources/. $(DIST)/
-	$(CC) $(LIBNAME) $(LIBDIR) -o $(DIST)/$(PRGNAME) *.o
+	$(CC) $(LIBNAME) $(LIBDIR) -o $@ $^
 
-compile:
-	$(CC) $(CFLAGS) $(INCLUDES) $(DEFINE) src/loaders/$(FILES) \
-																				src/app/$(FILES) \
-																				src/graphic/api/$(FILES) \
-																				src/devices/opengl/$(FILES) \
-																				src/$(FILES)
+$(OBJECT_FILES): $(OBJ)/%.o: %.cpp
+	mkdir -p $(@D)
+	$(CC) $(CFLAGS) $(INCLUDES) $(DEFINE) $< -o $@
 
 clean:
-	rm -rf *.o $(DIST)
+	rm -rf *.o $(DIST) $(OBJ)
