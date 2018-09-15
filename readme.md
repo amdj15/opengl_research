@@ -1,4 +1,4 @@
 ### Compile and run on mac:
 
-`make clean && make all && cd ./bin && ./booom`
+`make clean && make && cd ./bin && ./booom`
 
