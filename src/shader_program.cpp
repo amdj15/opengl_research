@@ -1,7 +1,7 @@
 #include <iostream>
 #include "shader_program.h"
 
-#include "graphic/api/renderer.h"
+#include "graphic/renderer.h"
 #include "devices/opengl/common.h"
 
 ShaderProgram::ShaderProgram() {

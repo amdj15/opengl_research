@@ -3,7 +3,7 @@
 #include <sstream>
 #include "shader.h"
 
-#include "graphic/api/renderer.h"
+#include "graphic/renderer.h"
 #include "devices/opengl/common.h"
 
 Shader::Shader(std::string filepath, unsigned int type): m_Filepath(filepath), m_Type(type) {

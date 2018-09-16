@@ -18,12 +18,13 @@ DEFINE=-D GLEW_STATIC -D STB_IMAGE_IMPLEMENTATION
 
 DIST=bin
 SRC=src
-OBJ=obj
+OBJ=build
 
 SOURCE_FILES=$(wildcard $(SRC)/app/*.cpp) \
 						 $(wildcard $(SRC)/loaders/*.cpp) \
 						 $(wildcard $(SRC)/devices/opengl/*.cpp) \
 						 $(wildcard $(SRC)/graphic/api/*.cpp) \
+						 $(wildcard $(SRC)/graphic/*.cpp) \
 						 $(wildcard $(SRC)/*.cpp)
 
 OBJECT_FILES=$(SOURCE_FILES:%.cpp=$(OBJ)/%.o)
@@ -34,8 +35,8 @@ build: $(EXECUTABLE)
 
 $(EXECUTABLE): $(OBJECT_FILES)
 	mkdir -p $(DIST)
-	cp -a resources/. $(DIST)/
 	$(CC) $(LIBNAME) $(LIBDIR) -o $@ $^
+	cp -a resources/. $(DIST)/
 
 $(OBJECT_FILES): $(OBJ)/%.o: %.cpp
 	mkdir -p $(@D)

@@ -1,6 +1,6 @@
 #include "vertex_buffer.h"
 
-#include "graphic/api/renderer.h"
+#include "graphic/renderer.h"
 #include "devices/opengl/common.h"
 
 VertexBuffer::VertexBuffer(const void* data, unsigned int size) {

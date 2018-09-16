@@ -6,7 +6,7 @@
 #include <math.h>
 
 #include "app/application.h"
-#include "graphic/api/renderer.h"
+#include "graphic/renderer.h"
 #include "vertex_buffer.h"
 #include "index_buffer.h"
 #include "vertex_array.h"
@@ -43,9 +43,9 @@ int main() {
   mousePositions.lastY = window.getHeight() / 2.0f;
   mousePositions.isFirstMouse = true;
 
-  // *************************************************************************
+  Graphic::Renderer* renderer = app.GetRenderer();
 
-  Renderer renderer;
+  // *************************************************************************
 
   float lastTime = 0.0f;
   float deltaTime = 0.0f;
@@ -120,7 +120,7 @@ int main() {
     unsigned int drawCallsCnt = 0;
 
     /* Render here */
-    renderer.clear();
+    renderer->clear();
 
     processInput(window.getGlfwWindow(), camera, deltaTime);
 
@@ -161,7 +161,7 @@ int main() {
       for(unsigned int j = 0; j < models[i].getMeshes().size(); j++) {
         drawCallsCnt++;
 
-        renderer.draw(models[i].getMeshes()[j]->GetVao(), models[i].getMeshes()[j]->GetIbo(), *shaderPr);
+        renderer->draw(models[i].getMeshes()[j]->GetVao(), models[i].getMeshes()[j]->GetIbo(), *shaderPr);
       }
     }
 
@@ -187,7 +187,7 @@ static glm::vec3 rotateAroundPoint(float angle, float radius, const glm::vec3 &p
   glm::vec3 result(1.0f, 1.0f, 1.0f);
 
   result.x = position.x + cos(angle) * radius;
-  result.y = position.y;
+  result.y = position.y + sin(angle) * radius;
   result.z = position.z + sin(angle) * radius;
 
   return result;

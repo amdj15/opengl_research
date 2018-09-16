@@ -2,7 +2,7 @@
 #include "vertex_buffer_layout.h"
 #include <iostream>
 
-#include "graphic/api/renderer.h"
+#include "graphic/renderer.h"
 #include "devices/opengl/common.h"
 
 VertexArray::VertexArray() {

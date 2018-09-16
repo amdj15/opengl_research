@@ -2,7 +2,7 @@
 #include "texture.h"
 #include <iostream>
 
-#include "graphic/api/renderer.h"
+#include "graphic/renderer.h"
 #include "devices/opengl/common.h"
 
 Texture::Texture(const std::string &path):
