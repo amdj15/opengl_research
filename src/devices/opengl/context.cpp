@@ -16,7 +16,7 @@ GLContext::GLContext() {
 
   GLCall(glEnable(GL_CULL_FACE));
   GLCall(glCullFace(GL_BACK));
-  // GLCall(glPolygonMode(GL_FRONT_AND_BACK, GL_LINE));
+  GLCall(glPolygonMode(GL_FRONT_AND_BACK, GL_FILL));
 
   GLCall(glEnable(GL_BLEND));
   GLCall(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));

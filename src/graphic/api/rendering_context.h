@@ -4,10 +4,10 @@ namespace Graphic {
   enum class RenderingAPI { OpenGL };
 
   class Context {
-    private:
-      static Context m_Context;
-
     public:
-      static void Create(RenderingAPI api);
+      RenderingAPI m_CurrentAPI;
   };
+
+  void CreateContext(RenderingAPI api);
+  Context CurrentContext();
 }

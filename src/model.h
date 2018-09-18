@@ -5,7 +5,6 @@
 #include <assimp/scene.h>
 #include "mesh.h"
 #include "loaders/model_loader.h"
-#include "shader_program.h"
 
 class Model {
   public:

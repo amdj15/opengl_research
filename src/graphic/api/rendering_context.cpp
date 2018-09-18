@@ -3,10 +3,20 @@
 #include "rendering_context.h"
 #include "../../devices/opengl/context.h"
 
-void Graphic::Context::Create(RenderingAPI api) {
-  if (api == RenderingAPI::OpenGL) {
-    m_Context = Devices::GLContext();
-  } else {
-    throw std::runtime_error(std::string("Rendering API is not supported"));
+namespace Graphic {
+  Context context;
+
+  void CreateContext(RenderingAPI api) {
+    if (api == RenderingAPI::OpenGL) {
+      context = Devices::GLContext();
+    } else {
+      throw std::runtime_error(std::string("Rendering API is not supported"));
+    }
+
+    context.m_CurrentAPI = api;
+  }
+
+  Context CurrentContext() {
+    return context;
   }
 }

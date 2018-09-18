@@ -1,6 +1,6 @@
 #pragma once
 
-#include "vertex_buffer.h"
+#include "graphic/api/vertex_buffer.h"
 #include "vertex_buffer_layout.h"
 
 class VertexArray {
@@ -10,7 +10,7 @@ class VertexArray {
     VertexArray();
     ~VertexArray();
 
-    void addBuffer(const VertexBuffer& vbo, const VertexBufferLayout& layout);
+    void addBuffer(const Graphic::VertexBuffer& vbo, const VertexBufferLayout& layout);
     void bind() const;
     void unbind() const;
 

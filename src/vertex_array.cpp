@@ -13,7 +13,7 @@ VertexArray::~VertexArray() {
   GLCall(glDeleteVertexArrays(1, &m_RendererId));
 }
 
-void VertexArray::addBuffer(const VertexBuffer& vbo, const VertexBufferLayout& layout) {
+void VertexArray::addBuffer(const Graphic::VertexBuffer& vbo, const VertexBufferLayout& layout) {
  vbo.bind();
  this->bind();
 

@@ -7,9 +7,6 @@
 
 #include "app/application.h"
 #include "graphic/renderer.h"
-#include "vertex_buffer.h"
-#include "index_buffer.h"
-#include "vertex_array.h"
 #include "shader_program.h"
 #include "shader.h"
 #include "texture.h"

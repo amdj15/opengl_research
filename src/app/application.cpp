@@ -7,9 +7,11 @@ Application::~Application() {
 }
 
 void Application::Init() {
-  m_Window.Init(Graphic::RenderingAPI::OpenGL);
-  Graphic::Context::Create(Graphic::RenderingAPI::OpenGL);
-  m_Renderer = Graphic::Renderer::Create(Graphic::RenderingAPI::OpenGL);
+  Graphic::RenderingAPI api = Graphic::RenderingAPI::OpenGL;
+
+  m_Window.Init(api);
+  Graphic::CreateContext(api);
+  m_Renderer = Graphic::Renderer::Create(api);
 }
 
 void Application::Run() {}

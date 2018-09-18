@@ -1,6 +1,6 @@
 #include "mesh.h"
 #include "vertex_buffer_layout.h"
-#include "vertex_buffer.h"
+#include "graphic/api/vertex_buffer.h"
 #include <vector>
 #include <iostream>
 
@@ -48,7 +48,7 @@ void Mesh::setupMesh() {
     vertexesData.push_back(m_Vertices[i].Tangent.z);
   }
 
-  VertexBuffer vbo(&vertexesData[0], sizeof(float) * vertexesData.size());
+  Graphic::VertexBuffer* vbo = Graphic::VertexBuffer::Create(&vertexesData[0], sizeof(float) * vertexesData.size());
 
   VertexBufferLayout layout;
   layout.push(3);
@@ -56,14 +56,15 @@ void Mesh::setupMesh() {
   layout.push(2);
   layout.push(3);
 
-  m_VAO->addBuffer(vbo, layout);
+  m_VAO->addBuffer(*vbo, layout);
 
   for (std::map<std::string, MeshTexture>::iterator it = m_MeshTextureStructs.begin(); it != m_MeshTextureStructs.end(); it++) {
     Texture *texture = new Texture(it->first);
     m_Textures[it->second.type] = texture;
   }
 
-  vbo.unbind();
   m_VAO->unbind();
   m_IBO->unbind();
+
+  delete vbo;
 }
