@@ -5,11 +5,8 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <math.h>
 
-#include "window.h"
-#include "renderer.h"
-#include "vertex_buffer.h"
-#include "index_buffer.h"
-#include "vertex_array.h"
+#include "app/application.h"
+#include "graphic/renderer.h"
 #include "shader_program.h"
 #include "shader.h"
 #include "texture.h"
@@ -32,14 +29,20 @@ Camera camera;
 
 int main() {
   // TODO: check intitialization errors
-  Window window("Cubes");
+  Application app("Engine");
+  app.Init();
+
+  Window window = app.GetWindow();
+
   glfwSetCursorPosCallback(window.getGlfwWindow(), mouseCallback);
 
   mousePositions.lastX = window.getWidth() / 2.0f;
   mousePositions.lastY = window.getHeight() / 2.0f;
   mousePositions.isFirstMouse = true;
 
-  Renderer renderer;
+  Graphic::Renderer* renderer = app.GetRenderer();
+
+  // *************************************************************************
 
   float lastTime = 0.0f;
   float deltaTime = 0.0f;
@@ -49,9 +52,6 @@ int main() {
 
   ShaderProgram* shaders[] = {
     lightSourceShader,
-    modelShader,
-    modelShader,
-    modelShader,
     modelShader,
   };
 
@@ -73,17 +73,11 @@ int main() {
   glm::vec3 positions[] = {
     lightPosition,
     glm::vec3(0.0f, -13.5f, -15.0f),
-    glm::vec3(-25.0f, -15.0f, -25.0f),
-    glm::vec3(-10.0f, -13.5f, -20.0f),
-    glm::vec3(10.0f, -13.5f, -10.0f),
   };
 
   glm::vec3 scales[] = {
     glm::vec3(2.0f),
     glm::vec3(0.2f),
-    glm::vec3(50.0f, 1.0f, 50.0f),
-    glm::vec3(0.03f),
-    glm::vec3(0.1f),
   };
 
   glm::mat4 projection = glm::perspective(glm::radians(45.0f), window.getWidth() / window.getHeight(), 1.0f, 1000.0f);
@@ -123,7 +117,7 @@ int main() {
     unsigned int drawCallsCnt = 0;
 
     /* Render here */
-    renderer.clear();
+    renderer->clear();
 
     processInput(window.getGlfwWindow(), camera, deltaTime);
 
@@ -164,7 +158,7 @@ int main() {
       for(unsigned int j = 0; j < models[i].getMeshes().size(); j++) {
         drawCallsCnt++;
 
-        renderer.draw(models[i].getMeshes()[j]->GetVao(), models[i].getMeshes()[j]->GetIbo(), *shaderPr);
+        renderer->draw(models[i].getMeshes()[j]->GetVao(), models[i].getMeshes()[j]->GetIbo(), *shaderPr);
       }
     }
 
@@ -190,7 +184,7 @@ static glm::vec3 rotateAroundPoint(float angle, float radius, const glm::vec3 &p
   glm::vec3 result(1.0f, 1.0f, 1.0f);
 
   result.x = position.x + cos(angle) * radius;
-  result.y = position.y;
+  result.y = position.y + sin(angle) * radius;
   result.z = position.z + sin(angle) * radius;
 
   return result;

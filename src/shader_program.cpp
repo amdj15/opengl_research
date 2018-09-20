@@ -1,7 +1,8 @@
-#include <GL/glew.h>
 #include <iostream>
 #include "shader_program.h"
-#include "renderer.h"
+
+#include "graphic/renderer.h"
+#include "devices/opengl/common.h"
 
 ShaderProgram::ShaderProgram() {
   GLCall(m_RendererId = glCreateProgram());

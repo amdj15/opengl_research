@@ -1,11 +1,8 @@
 #include <iostream>
-#include <GL/glew.h>
-
 #include "window.h"
+#include "../devices/opengl/device.h"
 
-Window::Window(std::string title) {
-  m_Title = title;
-
+Window::Window(std::string title): m_Title(title) {
   if (!glfwInit()) {
     m_InitErrorString = "Can't initialize GLFW";
     return;
@@ -18,8 +15,6 @@ Window::Window(std::string title) {
   m_Height = mode->height;
   m_InitSuccess = false;
   m_InitErrorString = "";
-
-  this->init();
 }
 
 Window::Window(unsigned int width, unsigned int height, std::string title)
@@ -34,21 +29,17 @@ Window::Window(unsigned int width, unsigned int height, std::string title)
     m_InitErrorString = "Can't initialize GLFW";
     return;
   }
-
-  this->init();
 }
 
 Window::~Window() {
   glfwTerminate();
 }
 
-void Window::init() {
-  glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-  glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-  glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE); // To make MacOS happy; should not be needed
-  glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE); // We don't want the old OpenGL
+void Window::Init(Graphic::RenderingAPI api) {
+  if (api == Graphic::RenderingAPI::OpenGL) {
+    m_Window = Devices::OpenGL::Device::Init(m_Width, m_Height, m_Title);
+  }
 
-  m_Window = glfwCreateWindow(m_Width, m_Height, m_Title.c_str(), m_Monitor, NULL);
   if (!m_Window) {
     glfwTerminate();
 
@@ -61,21 +52,11 @@ void Window::init() {
   glfwSwapInterval(1);
   glfwSetInputMode(m_Window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
-  if (glewInit() != GLEW_OK) {
-    m_InitErrorString = "Can't init glew";
-    return;
-  }
-
-  std::cout << "OpenGL version: " << glGetString(GL_VERSION) << std::endl;
-  std::cout << "GLSL version: " << glGetString(GL_SHADING_LANGUAGE_VERSION) << std::endl;
-  std::cout << "Vendor: " << glGetString(GL_VENDOR) << std::endl;
-  std::cout << "Renderer: " << glGetString(GL_RENDERER) << std::endl;
-
   m_InitSuccess = true;
-}
+ }
 
 bool Window::isOpen() {
-  return !glfwWindowShouldClose(m_Window);
+ return !glfwWindowShouldClose(m_Window);
 }
 
 void Window::swapBuffers() {

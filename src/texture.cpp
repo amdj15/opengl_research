@@ -1,8 +1,9 @@
-#include <gl/glew.h>
 #include <stb_image/stb_image.h>
 #include "texture.h"
-#include "renderer.h"
 #include <iostream>
+
+#include "graphic/renderer.h"
+#include "devices/opengl/common.h"
 
 Texture::Texture(const std::string &path):
   m_RendererId(0), m_FilePath(path), m_LocalBuffer(nullptr),

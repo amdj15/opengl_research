@@ -3,6 +3,8 @@
 #include <GLFW/glfw3.h>
 #include <string>
 
+#include "../graphic/api/rendering_context.h"
+
 class Window {
   private:
     GLFWwindow* m_Window;
@@ -21,6 +23,7 @@ class Window {
     bool isOpen();
     void swapBuffers();
     void pollEvents();
+    void Init(Graphic::RenderingAPI api);
 
     inline const float getWidth() const {
       return (float)m_Width;
@@ -34,6 +37,5 @@ class Window {
       return m_Window;
     }
 
-  private:
-    void init();
+    inline bool isInitialized() const { return m_InitSuccess; }
 };

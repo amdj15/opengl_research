@@ -1,9 +1,10 @@
-#include <GL/glew.h>
 #include <iostream>
 #include <fstream>
 #include <sstream>
 #include "shader.h"
-#include "renderer.h"
+
+#include "graphic/renderer.h"
+#include "devices/opengl/common.h"
 
 Shader::Shader(std::string filepath, unsigned int type): m_Filepath(filepath), m_Type(type) {
   m_Source = loadShader(filepath);

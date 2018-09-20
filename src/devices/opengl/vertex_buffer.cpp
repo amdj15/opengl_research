@@ -1,7 +1,8 @@
-#include <gl/glew.h>
-
+#include "common.h"
 #include "vertex_buffer.h"
-#include "renderer.h"
+
+using namespace Devices;
+using namespace OpenGL;
 
 VertexBuffer::VertexBuffer(const void* data, unsigned int size) {
   GLCall(glGenBuffers(1, &m_RendererId));
@@ -20,4 +21,3 @@ void VertexBuffer::bind() const {
 void VertexBuffer::unbind() const {
   GLCall(glBindBuffer(GL_ARRAY_BUFFER, 0));
 }
-

@@ -14,18 +14,38 @@ INCLUDES=-I vendors
 
 CFLAGS=-c -Wall -std=c++14
 
-DEFINE=-D GLEW_STATIC -D STB_IMAGE_IMPLEMENTATION
+# -MMD flag allow to create .d files
+DEFINE=-D GLEW_STATIC -D STB_IMAGE_IMPLEMENTATION -MMD
 
-DIST=./bin
-FILES=*.cpp
+DIST=bin
+SRC=src
+OBJ=build
 
-all: compile
+SOURCE_FILES=$(wildcard $(SRC)/app/*.cpp) \
+						 $(wildcard $(SRC)/loaders/*.cpp) \
+						 $(wildcard $(SRC)/devices/opengl/*.cpp) \
+						 $(wildcard $(SRC)/graphic/api/*.cpp) \
+						 $(wildcard $(SRC)/graphic/*.cpp) \
+						 $(wildcard $(SRC)/*.cpp)
+
+OBJECT_FILES=$(SOURCE_FILES:%.cpp=$(OBJ)/%.o)
+DEP_FILES=$(OBJECT_FILES:%.o=%.d)
+
+EXECUTABLE=$(PRGNAME:%=$(DIST)/%)
+
+build: $(EXECUTABLE)
+
+$(EXECUTABLE): $(OBJECT_FILES)
 	mkdir -p $(DIST)
+	$(CC) $(LIBNAME) $(LIBDIR) -o $@ $^
 	cp -a resources/. $(DIST)/
-	$(CC) $(LIBNAME) $(LIBDIR) -o $(DIST)/$(PRGNAME) *.o
 
-compile:
-	$(CC) $(CFLAGS) $(INCLUDES) $(DEFINE) src/loaders/$(FILES) src/$(FILES)
+# Include all .d files
+-include $(DEP_FILES)
+
+$(OBJECT_FILES): $(OBJ)/%.o: %.cpp
+	mkdir -p $(@D)
+	$(CC) $(CFLAGS) $(INCLUDES) $(DEFINE) $< -o $@
 
 clean:
-	rm -rf *.o $(DIST)
+	rm -rf *.o $(DIST) $(OBJ)
