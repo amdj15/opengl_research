@@ -14,7 +14,8 @@ INCLUDES=-I vendors
 
 CFLAGS=-c -Wall -std=c++14
 
-DEFINE=-D GLEW_STATIC -D STB_IMAGE_IMPLEMENTATION
+# -MMD flag allow to create .d files
+DEFINE=-D GLEW_STATIC -D STB_IMAGE_IMPLEMENTATION -MMD
 
 DIST=bin
 SRC=src
@@ -28,6 +29,7 @@ SOURCE_FILES=$(wildcard $(SRC)/app/*.cpp) \
 						 $(wildcard $(SRC)/*.cpp)
 
 OBJECT_FILES=$(SOURCE_FILES:%.cpp=$(OBJ)/%.o)
+DEP_FILES=$(OBJECT_FILES:%.o=%.d)
 
 EXECUTABLE=$(PRGNAME:%=$(DIST)/%)
 
@@ -37,6 +39,9 @@ $(EXECUTABLE): $(OBJECT_FILES)
 	mkdir -p $(DIST)
 	$(CC) $(LIBNAME) $(LIBDIR) -o $@ $^
 	cp -a resources/. $(DIST)/
+
+# Include all .d files
+-include $(DEP_FILES)
 
 $(OBJECT_FILES): $(OBJ)/%.o: %.cpp
 	mkdir -p $(@D)
