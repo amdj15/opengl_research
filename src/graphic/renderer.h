@@ -13,6 +13,8 @@ namespace Graphic {
       unsigned int m_ShaderId;
 
     public:
+      virtual ~Renderer() = default;
+
       virtual void clear() const = 0;
       virtual void draw(const VertexArray *vao, const IndexBuffer *ibo, const ShaderProgram &sh) = 0;
 

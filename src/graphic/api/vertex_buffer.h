@@ -8,6 +8,8 @@ namespace Graphic {
       unsigned int m_RendererId;
 
     public:
+      virtual ~VertexBuffer() = default;
+
       virtual void bind() const = 0;
       virtual void unbind() const = 0;
 
