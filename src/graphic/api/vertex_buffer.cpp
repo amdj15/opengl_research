@@ -1,4 +1,5 @@
 #include "vertex_buffer.h"
+#include "rendering_context.h"
 #include "../../devices/opengl/vertex_buffer.h"
 
 using namespace Graphic;

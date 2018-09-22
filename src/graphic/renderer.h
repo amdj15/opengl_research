@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../vertex_array.h"
+#include "api/vertex_array.h"
 #include "../index_buffer.h"
 #include "../shader_program.h"
 #include "api/rendering_context.h"

@@ -10,7 +10,7 @@ namespace Devices {
         ~Renderer();
 
         void clear() const override;
-        void draw(const VertexArray *vao, const IndexBuffer *ibo, const ShaderProgram &sh) override;
+        void draw(const Graphic::VertexArray *vao, const IndexBuffer *ibo, const ShaderProgram &sh) override;
     };
   }
 }

@@ -9,7 +9,7 @@ Mesh::Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std:
   m_Indices(indices),
   m_MeshTextureStructs(textures)
 {
-  this->m_VAO = new VertexArray();
+  this->m_VAO = Graphic::VertexArray::Create();
   this->m_IBO = new IndexBuffer();
 
   setupMesh();
@@ -56,14 +56,14 @@ void Mesh::setupMesh() {
   layout.push(2);
   layout.push(3);
 
-  m_VAO->addBuffer(*vbo, layout);
+  m_VAO->AddBuffer(*vbo, layout);
 
   for (std::map<std::string, MeshTexture>::iterator it = m_MeshTextureStructs.begin(); it != m_MeshTextureStructs.end(); it++) {
     Texture *texture = new Texture(it->first);
     m_Textures[it->second.type] = texture;
   }
 
-  m_VAO->unbind();
+  m_VAO->Unbind();
   m_IBO->unbind();
 
   delete vbo;

@@ -9,8 +9,8 @@ namespace Devices {
         VertexBuffer(const void* data, unsigned int size);
         ~VertexBuffer();
 
-        void bind() const override;
-        void unbind() const override;
+        void Bind() const override;
+        void Unbind() const override;
     };
   }
 }

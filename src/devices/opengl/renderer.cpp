@@ -7,10 +7,10 @@ using namespace OpenGL;
 Renderer::Renderer(){}
 Renderer::~Renderer(){}
 
-void Renderer::draw(const VertexArray *vao, const IndexBuffer *ibo, const ShaderProgram &sh) {
-  if (vao->getRendererId() != m_VaoId) {
-    vao->bind();
-    m_VaoId = vao->getRendererId();
+void Renderer::draw(const Graphic::VertexArray *vao, const IndexBuffer *ibo, const ShaderProgram &sh) {
+  if (vao->GetRendererId() != m_VaoId) {
+    vao->Bind();
+    m_VaoId = vao->GetRendererId();
   }
 
   if (ibo->getRendererId() != m_IboId) {

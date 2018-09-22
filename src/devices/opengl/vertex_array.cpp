@@ -1,9 +1,8 @@
+#include "common.h"
 #include "vertex_array.h"
-#include "vertex_buffer_layout.h"
-#include <iostream>
 
-#include "graphic/renderer.h"
-#include "devices/opengl/common.h"
+using namespace Devices;
+using namespace OpenGL;
 
 VertexArray::VertexArray() {
   GLCall(glGenVertexArrays(1, &m_RendererId));
@@ -13,9 +12,17 @@ VertexArray::~VertexArray() {
   GLCall(glDeleteVertexArrays(1, &m_RendererId));
 }
 
-void VertexArray::addBuffer(const Graphic::VertexBuffer& vbo, const VertexBufferLayout& layout) {
- vbo.bind();
- this->bind();
+void VertexArray::Bind() const {
+  GLCall(glBindVertexArray(m_RendererId));
+}
+
+void VertexArray::Unbind() const {
+  GLCall(glBindVertexArray(0));
+}
+
+void VertexArray::AddBuffer(const Graphic::VertexBuffer& vbo, const VertexBufferLayout& layout) {
+ vbo.Bind();
+ this->Bind();
 
   auto elements = layout.getElements();
   unsigned int offset = 0;
@@ -30,12 +37,4 @@ void VertexArray::addBuffer(const Graphic::VertexBuffer& vbo, const VertexBuffer
 
     offset += elem.count * sizeof(elem.type);
   }
-}
-
-void VertexArray::bind() const {
-  GLCall(glBindVertexArray(m_RendererId));
-}
-
-void VertexArray::unbind() const {
-  GLCall(glBindVertexArray(0));
 }

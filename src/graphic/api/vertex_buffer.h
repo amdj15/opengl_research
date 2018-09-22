@@ -1,7 +1,5 @@
 #pragma once
 
-#include "rendering_context.h"
-
 namespace Graphic {
   class VertexBuffer {
     protected:
@@ -10,12 +8,12 @@ namespace Graphic {
     public:
       virtual ~VertexBuffer() = default;
 
-      virtual void bind() const = 0;
-      virtual void unbind() const = 0;
+      virtual void Bind() const = 0;
+      virtual void Unbind() const = 0;
 
       static VertexBuffer* Create(const void* data, unsigned int size);
 
-      inline unsigned int getRendererId() const {
+      inline unsigned int GetRendererId() const {
         return m_RendererId;
       }
   };

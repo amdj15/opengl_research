@@ -4,7 +4,7 @@
 #include <string>
 #include <vector>
 
-#include "vertex_array.h"
+#include "graphic/api/vertex_array.h"
 #include "index_buffer.h"
 #include "texture.h"
 #include "loaders/model_loader.h"
@@ -21,22 +21,14 @@ class Mesh {
     ~Mesh();
 
   private:
-    VertexArray *m_VAO;
+    Graphic::VertexArray *m_VAO;
     IndexBuffer *m_IBO;
 
     void setupMesh();
 
   public:
-    inline VertexArray* GetVao() const {
-      return m_VAO;
-    }
-
-    inline IndexBuffer* GetIbo() const {
-      return m_IBO;
-    }
-
-    inline const std::map<std::string, Texture*> GetTextures() const {
-      return m_Textures;
-    }
+    inline Graphic::VertexArray* GetVao() const { return m_VAO; }
+    inline IndexBuffer* GetIbo() const { return m_IBO; }
+    inline const std::map<std::string, Texture*> GetTextures() const { return m_Textures; }
 };
 
