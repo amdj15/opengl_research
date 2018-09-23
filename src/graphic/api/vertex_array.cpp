@@ -10,10 +10,12 @@ VertexArray* VertexArray::Create() {
   Context context = CurrentContext();
   VertexArray *vertex_array = nullptr;
 
-  if (context.m_CurrentAPI == Graphic::RenderingAPI::OpenGL) {
-    vertex_array = new Devices::OpenGL::VertexArray();
-  } else {
-    throw std::runtime_error(std::string("Vertex Array for this api is not supported"));
+  switch(context.m_CurrentAPI) {
+    case Graphic::RenderingAPI::OpenGL:
+      vertex_array = new Devices::OpenGL::VertexArray();
+      break;
+    default:
+      throw std::runtime_error("Vertex Array for this api is not supported");
   }
 
   return vertex_array;

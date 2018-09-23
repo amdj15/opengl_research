@@ -1,7 +1,7 @@
 #pragma once
 
 #include "../../graphic/api/vertex_buffer.h"
-#include "../../vertex_buffer_layout.h"
+#include "../../graphic/api/vertex_buffer_layout.h"
 #include "../../graphic/api/vertex_array.h"
 
 namespace Devices {

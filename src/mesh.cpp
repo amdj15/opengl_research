@@ -1,7 +1,4 @@
 #include "mesh.h"
-#include "vertex_buffer_layout.h"
-#include "graphic/api/vertex_buffer.h"
-#include <vector>
 #include <iostream>
 
 Mesh::Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std::map<std::string, MeshTexture> textures):
@@ -51,10 +48,10 @@ void Mesh::setupMesh() {
   Graphic::VertexBuffer* vbo = Graphic::VertexBuffer::Create(&vertexesData[0], sizeof(float) * vertexesData.size());
 
   VertexBufferLayout layout;
-  layout.push(3);
-  layout.push(3);
-  layout.push(2);
-  layout.push(3);
+  layout.Push(3);
+  layout.Push(3);
+  layout.Push(2);
+  layout.Push(3);
 
   m_VAO->AddBuffer(*vbo, layout);
 

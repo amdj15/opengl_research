@@ -8,8 +8,8 @@ Window::Window(std::string title): m_Title(title) {
     return;
   }
 
-  GLFWmonitor* m_Monitor = glfwGetPrimaryMonitor();
-  const GLFWvidmode* mode = glfwGetVideoMode(m_Monitor);
+  GLFWmonitor* Monitor = glfwGetPrimaryMonitor();
+  const GLFWvidmode* mode = glfwGetVideoMode(Monitor);
 
   m_Width = mode->width;
   m_Height = mode->height;
@@ -22,8 +22,7 @@ Window::Window(unsigned int width, unsigned int height, std::string title)
     m_Height(height),
     m_Title(title),
     m_InitSuccess(false),
-    m_InitErrorString(""),
-    m_Monitor(nullptr)
+    m_InitErrorString("")
 {
   if (!glfwInit()) {
     m_InitErrorString = "Can't initialize GLFW";

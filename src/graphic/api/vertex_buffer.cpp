@@ -7,8 +7,9 @@ using namespace Graphic;
 VertexBuffer* VertexBuffer::Create(const void* data, unsigned int size) {
   Context context = CurrentContext();
 
-  if (context.m_CurrentAPI == RenderingAPI::OpenGL) {
-    return new Devices::OpenGL::VertexBuffer(data, size);
+  switch(context.m_CurrentAPI) {
+    case RenderingAPI::OpenGL:
+      return new Devices::OpenGL::VertexBuffer(data, size);
   }
 
   return nullptr;

@@ -7,7 +7,6 @@
 
 class Application {
   private:
-    bool m_IsRanning;
     Window m_Window;
     Graphic::Renderer *m_Renderer;
 
