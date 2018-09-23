@@ -1,15 +1,10 @@
+#include "common.h"
 #include "index_buffer.h"
-#include <iostream>
 
-#include "devices/opengl/common.h"
+using namespace Devices;
+using namespace OpenGL;
 
-IndexBuffer::IndexBuffer(const unsigned int* data, unsigned int count): m_Count(count) {
-  GLCall(glGenBuffers(1, &m_RendererId));
-  GLCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_RendererId));
-  GLCall(glBufferData(GL_ELEMENT_ARRAY_BUFFER, count * sizeof(GLuint), data, GL_STATIC_DRAW));
-}
-
-IndexBuffer::IndexBuffer(){
+IndexBuffer::IndexBuffer() {
   GLCall(glGenBuffers(1, &m_RendererId));
 }
 
@@ -17,18 +12,19 @@ IndexBuffer::~IndexBuffer() {
   GLCall(glDeleteBuffers(1, &m_RendererId));
 }
 
-void IndexBuffer::bind() const {
+void IndexBuffer::Bind() const {
   GLCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_RendererId));
 }
 
-void IndexBuffer::unbind() const {
+void IndexBuffer::Unbind() const {
   GLCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0));
 }
 
 void IndexBuffer::SetData(const unsigned int* data, unsigned int count) {
-  this->bind();
+  Bind();
   m_Count = count;
 
   GLCall(glBufferData(GL_ELEMENT_ARRAY_BUFFER, count * sizeof(GLuint), data, GL_STATIC_DRAW));
 }
+
 

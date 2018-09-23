@@ -7,14 +7,14 @@ using namespace OpenGL;
 Renderer::Renderer(){}
 Renderer::~Renderer(){}
 
-void Renderer::draw(const Graphic::VertexArray *vao, const IndexBuffer *ibo, const ShaderProgram &sh) {
+void Renderer::draw(const Graphic::VertexArray *vao, const Graphic::IndexBuffer *ibo, const ShaderProgram &sh) {
   if (vao->GetRendererId() != m_VaoId) {
     vao->Bind();
     m_VaoId = vao->GetRendererId();
   }
 
   if (ibo->getRendererId() != m_IboId) {
-    ibo->bind();
+    ibo->Bind();
     m_IboId = ibo->getRendererId();
   }
 

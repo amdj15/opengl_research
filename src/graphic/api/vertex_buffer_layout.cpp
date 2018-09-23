@@ -1,6 +1,5 @@
 #include "vertex_buffer_layout.h"
 #include "rendering_context.h"
-
 #include "../../devices/opengl/common.h"
 
 VertexBufferLayout::VertexBufferLayout(): m_Stride(0){}
@@ -16,6 +15,6 @@ void VertexBufferLayout::Push(unsigned int count) {
     default:
       std::runtime_error("Context not implemented");
   }
-  
+
   m_Stride += sizeof(count) * count;
 }

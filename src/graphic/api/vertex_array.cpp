@@ -1,7 +1,4 @@
-#include "vertex_array.h"
 #include "rendering_context.h"
-#include <string>
-
 #include "../../devices/opengl/vertex_array.h"
 
 using namespace Graphic;

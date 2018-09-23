@@ -7,7 +7,7 @@ Mesh::Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std:
   m_MeshTextureStructs(textures)
 {
   this->m_VAO = Graphic::VertexArray::Create();
-  this->m_IBO = new IndexBuffer();
+  this->m_IBO = Graphic::IndexBuffer::Create();
 
   setupMesh();
 }
@@ -61,7 +61,7 @@ void Mesh::setupMesh() {
   }
 
   m_VAO->Unbind();
-  m_IBO->unbind();
+  m_IBO->Unbind();
 
   delete vbo;
 }

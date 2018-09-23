@@ -1,6 +1,4 @@
-#include <string>
-
-#include "rendering_context.h"
+#include <stdexcept>
 #include "../../devices/opengl/context.h"
 
 namespace Graphic {
