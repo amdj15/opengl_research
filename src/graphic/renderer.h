@@ -2,7 +2,7 @@
 
 #include "api/vertex_array.h"
 #include "api/index_buffer.h"
-#include "../shader_program.h"
+#include "shader.h"
 #include "api/rendering_context.h"
 
 namespace Graphic {
@@ -16,7 +16,7 @@ namespace Graphic {
       virtual ~Renderer() = default;
 
       virtual void clear() const = 0;
-      virtual void draw(const VertexArray *vao, const IndexBuffer *ibo, const ShaderProgram &sh) = 0;
+      virtual void draw(const VertexArray *vao, const IndexBuffer *ibo, const Shader &sh) = 0;
 
       static Renderer* Create(RenderingAPI api);
   };

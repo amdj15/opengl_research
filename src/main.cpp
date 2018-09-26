@@ -7,15 +7,14 @@
 
 #include "app/application.h"
 #include "graphic/renderer.h"
-#include "shader_program.h"
-#include "shader.h"
+#include "graphic/shader.h"
+
 #include "texture.h"
 #include "camera.h"
 #include "model.h"
 
 static void processInput(GLFWwindow* window, Camera &camera, float deltaTime);
 static void mouseCallback(GLFWwindow* window, double xpos, double ypos);
-static ShaderProgram* loadShader(const std::string &name);
 static glm::vec3 rotateAroundPoint(float angle, float radius, const glm::vec3 &position);
 
 struct MousePositions {
@@ -47,13 +46,13 @@ int main() {
   float lastTime = 0.0f;
   float deltaTime = 0.0f;
 
-  ShaderProgram *modelShader = loadShader("model");
-  ShaderProgram *lightSourceShader = loadShader("light_source");
+  Graphic::Shader *modelShader = Graphic::Shader::CreateFromFile("./shaders/model.glsl");
+  Graphic::Shader *lightSourceShader = Graphic::Shader::CreateFromFile("./shaders/light_source.glsl");
 
-  ShaderProgram* shaders[] = {
-    lightSourceShader,
-    modelShader,
-  };
+  modelShader->Init();
+  lightSourceShader->Init();
+
+  Graphic::Shader *shaders[] = { lightSourceShader, modelShader };
 
   std::size_t modelsNumber = 2;
 
@@ -82,30 +81,30 @@ int main() {
 
   glm::mat4 projection = glm::perspective(glm::radians(45.0f), window.getWidth() / window.getHeight(), 1.0f, 1000.0f);
 
-  modelShader->bind();
-  modelShader->setUniformMatrix4fv("u_Projection", glm::value_ptr(projection));
-  modelShader->setUniform3f("u_LightColor", lightColor.x, lightColor.y, lightColor.z);
+  modelShader->Bind();
+  modelShader->SetUniformMatrix4fv("u_Projection", glm::value_ptr(projection));
+  modelShader->SetUniform3f("u_LightColor", lightColor.x, lightColor.y, lightColor.z);
 
   for(unsigned int i = 0; i < house->getMeshes().size(); i++) {
     Mesh *mesh = house->getMeshes()[i];
     std::map<std::string, Texture*> textures = mesh->GetTextures();
 
     textures["texture_diffuse"]->bind(0);
-    modelShader->setUniform1i("texture_diffuse", 0);
+    modelShader->SetUniform1i("texture_diffuse", 0);
 
     textures["texture_specular"]->bind(1);
-    modelShader->setUniform1i("texture_specular", 1);
+    modelShader->SetUniform1i("texture_specular", 1);
 
     textures["texture_normal"]->bind(2);
-    modelShader->setUniform1i("texture_normal", 2);
+    modelShader->SetUniform1i("texture_normal", 2);
 
-    modelShader->setUniform1f("material.shininess", mesh->m_Materials.shininess);
-    modelShader->setUniform1f("material.specularStrength", mesh->m_Materials.shininessStrength);
+    modelShader->SetUniform1f("material.shininess", mesh->m_Materials.shininess);
+    modelShader->SetUniform1f("material.specularStrength", mesh->m_Materials.shininessStrength);
   }
 
-  lightSourceShader->bind();
-  lightSourceShader->setUniform3f("u_LightColor", lightColor.x, lightColor.y, lightColor.z);
-  lightSourceShader->setUniformMatrix4fv("u_Projection", glm::value_ptr(projection));
+  lightSourceShader->Bind();
+  lightSourceShader->SetUniform3f("u_LightColor", lightColor.x, lightColor.y, lightColor.z);
+  lightSourceShader->SetUniformMatrix4fv("u_Projection", glm::value_ptr(projection));
 
   unsigned int activeShaderId;
 
@@ -125,15 +124,15 @@ int main() {
     glm::vec3 cameraPosition = camera.GetPosition();
 
     for (unsigned int i = 0; i < 2; i++) {
-      ShaderProgram* shader = shaders[i];
+      Graphic::Shader *shader = shaders[i];
 
-      shader->bind();
-      shader->setUniform3f("u_CameraPosition", cameraPosition.x, cameraPosition.y, cameraPosition.z);
-      shader->setUniform3f("u_LightPosition", lightPosition.x, lightPosition.y, lightPosition.z);
+      shader->Bind();
+      shader->SetUniform3f("u_CameraPosition", cameraPosition.x, cameraPosition.y, cameraPosition.z);
+      shader->SetUniform3f("u_LightPosition", lightPosition.x, lightPosition.y, lightPosition.z);
     }
 
     for (unsigned int i = 0; i < modelsNumber; i++) {
-      ShaderProgram* shaderPr = shaders[i];
+      Graphic::Shader *shaderPr = shaders[i];
 
       glm::mat4 modelMat(1.0f);
 
@@ -147,13 +146,13 @@ int main() {
         modelMat = glm::scale(modelMat, scales[i]);
       }
 
-      if (activeShaderId != shaderPr->getId()) {
-        shaderPr->bind();
-        activeShaderId = shaderPr->getId();
+      if (activeShaderId != shaderPr->GetId()) {
+        shaderPr->Bind();
+        activeShaderId = shaderPr->GetId();
       }
 
-      shaderPr->setUniformMatrix4fv("u_View", glm::value_ptr(view));
-      shaderPr->setUniformMatrix4fv("u_Model", glm::value_ptr(modelMat));
+      shaderPr->SetUniformMatrix4fv("u_View", glm::value_ptr(view));
+      shaderPr->SetUniformMatrix4fv("u_Model", glm::value_ptr(modelMat));
 
       for(unsigned int j = 0; j < models[i].getMeshes().size(); j++) {
         drawCallsCnt++;
@@ -188,19 +187,6 @@ static glm::vec3 rotateAroundPoint(float angle, float radius, const glm::vec3 &p
   result.z = position.z + sin(angle) * radius;
 
   return result;
-}
-
-static ShaderProgram* loadShader(const std::string &name) {
-  Shader modelVertexShader("./shaders/" + name + "_vertex.glsl", GL_VERTEX_SHADER);
-  Shader modelFragmentShader("./shaders/" + name + "_fragment.glsl", GL_FRAGMENT_SHADER);
-
-  ShaderProgram *modelShaders = new ShaderProgram();
-
-  modelShaders->attach(&modelVertexShader);
-  modelShaders->attach(&modelFragmentShader);
-  modelShaders->link();
-
-  return modelShaders;
 }
 
 static void mouseCallback(GLFWwindow* window, double xpos, double ypos) {
