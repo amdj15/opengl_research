@@ -52,31 +52,36 @@ int main() {
   modelShader->Init();
   lightSourceShader->Init();
 
-  Graphic::Shader *shaders[] = { lightSourceShader, modelShader };
-
-  std::size_t modelsNumber = 2;
+  Graphic::Shader *shaders[] = { lightSourceShader, modelShader, modelShader };
 
   Model *sphere = new Model("./sphere.obj");
   Model *house = new Model("./house_2/WoodenCabinObj.obj");
+  Model *man = new Model("./Old_Man/muro.obj");
 
   house->Load();
   sphere->Load();
+  man->Load();
 
+  std::size_t modelsNumber = 3;
   Model *models = new Model[modelsNumber];
+
   models[0] = *sphere;
   models[1] = *house;
+  models[2] = *man;
 
-  glm::vec3 lightPosition = glm::vec3(0.0f, 0.0f, -15.0f);
+  glm::vec3 lightPosition = glm::vec3(0.0f, 7.0f, -15.0f);
   glm::vec3 lightColor = glm::vec3(1.0f, 1.0f, 1.0f);
 
   glm::vec3 positions[] = {
     lightPosition,
     glm::vec3(0.0f, -13.5f, -15.0f),
+    glm::vec3(6.0f, -7.5f, -12.0f),
   };
 
   glm::vec3 scales[] = {
     glm::vec3(2.0f),
-    glm::vec3(0.2f),
+    glm::vec3(1.0f),
+    glm::vec3(0.1f),
   };
 
   glm::mat4 projection = glm::perspective(glm::radians(45.0f), window.getWidth() / window.getHeight(), 1.0f, 1000.0f);
@@ -84,23 +89,6 @@ int main() {
   modelShader->Bind();
   modelShader->SetUniformMatrix4fv("u_Projection", glm::value_ptr(projection));
   modelShader->SetUniform3f("u_LightColor", lightColor.x, lightColor.y, lightColor.z);
-
-  for(unsigned int i = 0; i < house->getMeshes().size(); i++) {
-    Mesh *mesh = house->getMeshes()[i];
-    std::map<std::string, Texture*> textures = mesh->GetTextures();
-
-    textures["texture_diffuse"]->bind(0);
-    modelShader->SetUniform1i("texture_diffuse", 0);
-
-    textures["texture_specular"]->bind(1);
-    modelShader->SetUniform1i("texture_specular", 1);
-
-    textures["texture_normal"]->bind(2);
-    modelShader->SetUniform1i("texture_normal", 2);
-
-    modelShader->SetUniform1f("material.shininess", mesh->m_Materials.shininess);
-    modelShader->SetUniform1f("material.specularStrength", mesh->m_Materials.shininessStrength);
-  }
 
   lightSourceShader->Bind();
   lightSourceShader->SetUniform3f("u_LightColor", lightColor.x, lightColor.y, lightColor.z);
@@ -157,6 +145,29 @@ int main() {
       for(unsigned int j = 0; j < models[i].getMeshes().size(); j++) {
         drawCallsCnt++;
 
+        if (i > 0) {
+          Mesh *mesh = models[i].getMeshes()[j];
+          std::map<std::string, Texture*> textures = mesh->GetTextures();
+
+          if (textures.count("texture_diffuse") == 1) {
+            textures["texture_diffuse"]->bind(0);
+            shaderPr->SetUniform1i("texture_diffuse", 0);
+          }
+
+          if (textures.count("texture_specular") == 1) {
+            textures["texture_specular"]->bind(1);
+            shaderPr->SetUniform1i("texture_specular", 1);
+          }
+
+          if (textures.count("texture_normal") == 1) {
+            textures["texture_normal"]->bind(2);
+            shaderPr->SetUniform1i("texture_normal", 2);
+          }
+
+          shaderPr->SetUniform1f("material.shininess", mesh->m_Materials.shininess);
+          shaderPr->SetUniform1f("material.specularStrength", mesh->m_Materials.shininessStrength);
+        }
+
         renderer->draw(models[i].getMeshes()[j]->GetVao(), models[i].getMeshes()[j]->GetIbo(), *shaderPr);
       }
     }
@@ -175,6 +186,7 @@ int main() {
 
   delete sphere;
   delete house;
+  delete man;
 
   return 0;
 }
@@ -183,7 +195,7 @@ static glm::vec3 rotateAroundPoint(float angle, float radius, const glm::vec3 &p
   glm::vec3 result(1.0f, 1.0f, 1.0f);
 
   result.x = position.x + cos(angle) * radius;
-  result.y = position.y + sin(angle) * radius;
+  result.y = position.y;
   result.z = position.z + sin(angle) * radius;
 
   return result;
