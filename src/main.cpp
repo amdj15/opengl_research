@@ -9,7 +9,7 @@
 #include "graphic/renderer.h"
 #include "graphic/shader.h"
 
-#include "texture.h"
+#include "graphic/api/texture.h"
 #include "camera.h"
 #include "model.h"
 
@@ -147,20 +147,20 @@ int main() {
 
         if (i > 0) {
           Mesh *mesh = models[i].getMeshes()[j];
-          std::map<std::string, Texture*> textures = mesh->GetTextures();
+          std::map<std::string, Graphic::Texture*> textures = mesh->GetTextures();
 
           if (textures.count("texture_diffuse") == 1) {
-            textures["texture_diffuse"]->bind(0);
+            textures["texture_diffuse"]->Bind(0);
             shaderPr->SetUniform1i("texture_diffuse", 0);
           }
 
           if (textures.count("texture_specular") == 1) {
-            textures["texture_specular"]->bind(1);
+            textures["texture_specular"]->Bind(1);
             shaderPr->SetUniform1i("texture_specular", 1);
           }
 
           if (textures.count("texture_normal") == 1) {
-            textures["texture_normal"]->bind(2);
+            textures["texture_normal"]->Bind(2);
             shaderPr->SetUniform1i("texture_normal", 2);
           }
 

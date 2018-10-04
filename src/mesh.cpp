@@ -13,9 +13,8 @@ Mesh::Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std:
 }
 
 Mesh::~Mesh() {
-  for (std::map<std::string, Texture*>::iterator it = m_Textures.begin(); it != m_Textures.end(); it++) {
+  for (std::map<std::string, Graphic::Texture*>::iterator it = m_Textures.begin(); it != m_Textures.end(); it++) {
     std::cout << "Delete texture " << it->second->GetRendererId() << std::endl;
-
     delete it->second;
   }
 
@@ -56,7 +55,7 @@ void Mesh::setupMesh() {
   m_VAO->AddBuffer(*vbo, layout);
 
   for (std::map<std::string, MeshTexture>::iterator it = m_MeshTextureStructs.begin(); it != m_MeshTextureStructs.end(); it++) {
-    Texture *texture = new Texture(it->first);
+    Graphic::Texture *texture = Graphic::Texture::Create2DFromFile(it->first);
     m_Textures[it->second.type] = texture;
   }
 
