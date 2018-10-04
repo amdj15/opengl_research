@@ -11,7 +11,6 @@ AssimpLoader::~AssimpLoader() {}
 void AssimpLoader::Load() {
   Assimp::Importer importer;
   const aiScene *scene = importer.ReadFile(m_PathToFile, aiProcess_Triangulate |
-                                                         // aiProcess_FlipUVs |
                                                          aiProcess_CalcTangentSpace |
                                                          aiProcess_GenNormals |
                                                          aiProcess_JoinIdenticalVertices |
