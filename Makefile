@@ -39,6 +39,7 @@ $(EXECUTABLE): $(OBJECT_FILES)
 	mkdir -p $(DIST)
 	$(CC) $(LIBNAME) $(LIBDIR) -o $@ $^
 	cp -a resources/. $(DIST)/
+	cp -a src/shaders $(DIST)/shaders/
 
 # Include all .d files
 -include $(DEP_FILES)
