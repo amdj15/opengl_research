@@ -12,10 +12,10 @@ LIBNAME=-lGLEW -lglfw3 -lassimp -lirrxml -lzlibstatic \
 # includes for libraries
 INCLUDES=-I vendors
 
-CFLAGS=-c -Wall -std=c++14
-
 # -MMD flag allow to create .d files
-DEFINE=-D GLEW_STATIC -D STB_IMAGE_IMPLEMENTATION -MMD
+CFLAGS=-c -Wall -std=c++14 -fvisibility=hidden -MMD
+
+DEFINE=-D GLEW_STATIC -D STB_IMAGE_IMPLEMENTATION
 
 DIST=bin
 SRC=src
