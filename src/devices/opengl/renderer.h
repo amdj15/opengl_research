@@ -9,8 +9,8 @@ namespace Devices {
         Renderer();
         ~Renderer();
 
-        void clear() const override;
-        void draw(const Graphic::VertexArray *vao, const Graphic::IndexBuffer *ibo, const Graphic::Shader &sh) override;
+        void Clear() const override;
+        void Draw(const Graphic::VertexArray *vao, const Graphic::IndexBuffer *ibo, const Graphic::Shader *sh) override;
     };
   }
 }

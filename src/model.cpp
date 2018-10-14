@@ -33,7 +33,7 @@ std::ostream& operator<<(std::ostream& os, const Mesh &m) {
 
 Model::Model() {}
 
-Model::Model(const std::string pathToFile): m_PathToFile(pathToFile) {
+Model::Model(const std::string &pathToFile): m_PathToFile(pathToFile) {
   m_Directory = pathToFile.substr(0, pathToFile.find_last_of('/'));
   m_Loader = new AssimpLoader(pathToFile, m_Directory);
 }

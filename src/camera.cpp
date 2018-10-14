@@ -1,6 +1,7 @@
 #include <glm/gtc/matrix_transform.hpp>
-
 #include "camera.h"
+
+using namespace Eng;
 
 Camera::Camera(): m_Position(0.0f, 0.0f, 3.0f),
                   m_ViewDirection(0.0f, 0.0f, -1.0f),
