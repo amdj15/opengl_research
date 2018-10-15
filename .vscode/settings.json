@@ -15,6 +15,7 @@
         "iterator": "cpp",
         "utility": "cpp",
         "string": "cpp",
-        "map": "cpp"
+        "map": "cpp",
+        "memory": "cpp"
     }
 }

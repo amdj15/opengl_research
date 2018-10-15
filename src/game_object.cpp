@@ -13,6 +13,8 @@ GameObject::GameObject(const std::string &pathToFile, const std::string &shaderF
 }
 
 GameObject::~GameObject() {
+  printf("game object was deleted \n");
+
   delete m_Model;
   delete m_Shader;
 }

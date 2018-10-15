@@ -1,6 +1,7 @@
 #pragma once
 #include "graphic/shader.h"
 #include "model.h"
+#include <memory>
 
 namespace Eng {
   class GameObject {
@@ -19,3 +20,5 @@ namespace Eng {
       inline Graphic::Shader* GetShader() const { return m_Shader; }
   };
 }
+
+typedef std::shared_ptr<Eng::GameObject> ShGameObject;

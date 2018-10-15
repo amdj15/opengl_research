@@ -8,13 +8,13 @@ namespace Eng {
   class Scene {
     private:
       Camera m_Camera;
-      std::vector<GameObject*> m_GameObjects;
+      std::vector<ShGameObject> m_GameObjects;
 
     public:
       Scene();
       ~Scene();
 
-      void AddGameObject(GameObject *gameObject);
+      void AddGameObject(ShGameObject gameObject);
       void Render(Graphic::Renderer *renderer);
   };
 }

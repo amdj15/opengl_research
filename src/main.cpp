@@ -3,8 +3,7 @@
 #include "scene.h"
 
 static void initScene(Eng::Scene *scene) {
-  // TODO: Delete somewhere
-  Eng::GameObject *rect = new Eng::GameObject("sq.obj", "shaders/simple.glsl");
+  ShGameObject rect = std::make_shared<Eng::GameObject>("bunny.obj", "shaders/simple.glsl");
 
   scene->AddGameObject(rect);
 }

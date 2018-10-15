@@ -8,13 +8,13 @@ Scene::Scene() {
 
 Scene::~Scene() {}
 
-void Scene::AddGameObject(GameObject *gameObject) {
+void Scene::AddGameObject(ShGameObject gameObject) {
   gameObject->Init();
   m_GameObjects.push_back(gameObject);
 }
 
 void Scene::Render(Graphic::Renderer *renderer) {
-  for(GameObject *gameObject : m_GameObjects) {
+  for(ShGameObject gameObject : m_GameObjects) {
     Model *model = gameObject->GetModel();
     Graphic::Shader *shader = gameObject->GetShader();
 
