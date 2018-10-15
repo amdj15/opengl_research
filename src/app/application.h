@@ -5,6 +5,7 @@
 
 #include "../graphic/renderer.h"
 #include "../scene.h"
+#include "../input.h"
 
 class Application {
   private:
@@ -12,6 +13,7 @@ class Application {
     Graphic::Renderer *m_Renderer;
     void(*onRender)();
     Eng::Scene m_Scene;
+    Eng::Input m_Input;
 
   public:
     Application(std::string title);
@@ -25,4 +27,5 @@ class Application {
 
     private:
       void render();
+      void update(float deltaTime);
 };

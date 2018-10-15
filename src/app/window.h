@@ -32,9 +32,7 @@ class Window {
       return (float)m_Height;
     }
 
-    inline GLFWwindow* getGlfwWindow() const {
-      return m_Window;
-    }
+    inline GLFWwindow* getGlfwWindow() const { return m_Window; }
 
     inline bool isInitialized() const { return m_InitSuccess; }
 };

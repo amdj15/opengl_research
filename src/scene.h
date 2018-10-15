@@ -3,6 +3,7 @@
 #include "game_object.h"
 #include "camera.h"
 #include "graphic/renderer.h"
+#include "input.h"
 
 namespace Eng {
   class Scene {
@@ -16,5 +17,7 @@ namespace Eng {
 
       void AddGameObject(ShGameObject gameObject);
       void Render(Graphic::Renderer *renderer);
+
+      void Update(const Input* input);
   };
 }

@@ -1,6 +1,6 @@
 #include "application.h"
 
-Application::Application(std::string title): m_Window(title) {}
+Application::Application(std::string title): m_Window(640, 480, title), m_Input(nullptr) {}
 
 Application::~Application() {
   delete m_Renderer;
@@ -13,12 +13,21 @@ void Application::Init(void(*inintScene)(Eng::Scene*)) {
   Graphic::CreateContext(api);
   m_Renderer = Graphic::Renderer::Create(api);
   m_Scene = Eng::Scene();
+  m_Input = Eng::Input(m_Window.getGlfwWindow());
 
   inintScene(&m_Scene);
 }
 
 void Application::Run() {
+  float lastTime = 0.0f;
+  float deltaTime = 0.0f;
+
   while(m_Window.isOpen()) {
+    float currentTime = glfwGetTime();
+    deltaTime = currentTime - lastTime;
+    lastTime = currentTime;
+
+    update(deltaTime);
     render();
   }
 }
@@ -30,4 +39,9 @@ void Application::render() {
 
   m_Window.swapBuffers();
   m_Window.pollEvents();
+}
+
+void Application::update(float deltaTime) {
+  m_Input.Process(deltaTime);
+  m_Scene.Update(&m_Input);
 }

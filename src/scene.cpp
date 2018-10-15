@@ -23,3 +23,7 @@ void Scene::Render(Graphic::Renderer *renderer) {
     }
   }
 }
+
+void Scene::Update(const Input* input) {
+  m_Camera.Update(input);
+}
