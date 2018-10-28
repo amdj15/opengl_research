@@ -8,6 +8,7 @@ namespace Eng {
     private:
       Graphic::Shader *m_Shader;
       Model *m_Model;
+      glm::mat4 m_Matrix;
 
     public:
       GameObject(const std::string &pathToFile);
@@ -18,6 +19,7 @@ namespace Eng {
 
       inline Model* GetModel() const { return m_Model; }
       inline Graphic::Shader* GetShader() const { return m_Shader; }
+      inline glm::mat4 GetModelMatrix() const { return m_Matrix; }
   };
 }
 

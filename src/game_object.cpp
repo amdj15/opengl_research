@@ -5,6 +5,7 @@ using namespace Eng;
 GameObject::GameObject(const std::string &pathToFile) {
   m_Model = new Model(pathToFile);
   m_Shader = Graphic::Shader::CreateFromFile("./shaders/model.glsl");
+  m_Matrix = glm::mat4(1.0f);
 }
 
 GameObject::GameObject(const std::string &pathToFile, const std::string &shaderFilePath) {

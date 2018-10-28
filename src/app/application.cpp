@@ -16,6 +16,8 @@ void Application::Init(void(*inintScene)(Eng::Scene*)) {
   m_Input = Eng::Input(m_Window.getGlfwWindow());
 
   inintScene(&m_Scene);
+
+  m_Scene.SetProjection(m_Window.getWidth(), m_Window.getHeight());
 }
 
 void Application::Run() {

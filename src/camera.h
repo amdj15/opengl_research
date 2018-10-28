@@ -17,7 +17,7 @@ namespace Eng {
     public:
       Camera();
       ~Camera();
-      glm::mat4 getViewMatrix() const;
+      glm::mat4 ViewMatrix() const;
 
       inline glm::vec3 GetPosition() const { return m_Position; }
 
