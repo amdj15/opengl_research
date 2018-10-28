@@ -3,7 +3,7 @@
 
 using namespace Eng;
 
-Input::Input(GLFWwindow *window): m_Window(window) {}
+Input::Input(GLFWwindow *window): m_Window(window), m_IsFirstMouse(true) {}
 
 Input::~Input() {}
 
@@ -16,6 +16,8 @@ void Input::Process(float deltaTime) {
       m_Keys[key] = key;
     }
   }
+
+  updateCoursor();
 }
 
 std::map<InputMoveDirection, InputMoveDirection> Input::GetMoveDirection() const {
@@ -38,4 +40,21 @@ std::map<InputMoveDirection, InputMoveDirection> Input::GetMoveDirection() const
   }
 
   return directions;
+}
+
+void Input::updateCoursor() {
+  double xpos, ypos;
+  glfwGetCursorPos(m_Window, &xpos, &ypos);
+
+  if (m_IsFirstMouse) {
+    m_IsFirstMouse = false;
+    m_XCoursor = xpos;
+    m_YCoursor = ypos;
+  }
+
+  m_XCoursorOffset = xpos - m_XCoursor;
+  m_YCoursorOffset = ypos - m_YCoursor;
+
+  m_XCoursor = xpos;
+  m_YCoursor = ypos;
 }

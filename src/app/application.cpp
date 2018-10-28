@@ -1,6 +1,6 @@
 #include "application.h"
 
-Application::Application(std::string title): m_Window(640, 480, title), m_Input(nullptr) {}
+Application::Application(std::string title): m_Window(title), m_Input(nullptr) {}
 
 Application::~Application() {
   delete m_Renderer;
@@ -21,16 +21,37 @@ void Application::Init(void(*inintScene)(Eng::Scene*)) {
 }
 
 void Application::Run() {
+  float time = glfwGetTime();
+  float lastUpdatedTime = time;
+
   float lastTime = 0.0f;
   float deltaTime = 0.0f;
+  int framesCnt = 0;
+  int updatesCnt = 0;
 
   while(m_Window.isOpen()) {
     float currentTime = glfwGetTime();
+    float updateTick = 1.0f / 60.0f;
+
     deltaTime = currentTime - lastTime;
     lastTime = currentTime;
 
-    update(deltaTime);
+    if (currentTime - lastUpdatedTime > updateTick) {
+      update(deltaTime);
+      updatesCnt++;
+      lastUpdatedTime = glfwGetTime();
+    }
+
     render();
+    framesCnt++;
+
+    if (currentTime - time > 1.0f) {
+      printf("frames: %i, updates: %i \n", framesCnt, updatesCnt);
+
+      framesCnt = 0;
+      updatesCnt = 0;
+      time = currentTime;
+    }
   }
 }
 

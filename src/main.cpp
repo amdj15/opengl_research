@@ -5,10 +5,12 @@
 static void initScene(Eng::Scene *scene) {
   ShGameObject rect = std::make_shared<Eng::GameObject>("chel.Obj", "shaders/simple.glsl");
   ShGameObject lamp = std::make_shared<Eng::GameObject>("sphere.obj", "shaders/light_source.glsl");
-  ShGameObject drag = std::make_shared<Eng::GameObject>("bunny.obj", "shaders/simple.glsl");
+  ShGameObject bunny = std::make_shared<Eng::GameObject>("bunny.obj", "shaders/simple.glsl");
+  ShGameObject drag = std::make_shared<Eng::GameObject>("dragon.obj", "shaders/simple.glsl");
 
   scene->AddGameObject(rect);
   scene->AddGameObject(lamp);
+  scene->AddGameObject(bunny);
   scene->AddGameObject(drag);
 }
 

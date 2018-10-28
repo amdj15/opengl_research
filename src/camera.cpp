@@ -18,6 +18,8 @@ glm::mat4 Camera::ViewMatrix() const {
 }
 
 void Camera::Update(const Input* input) {
+  processMouseMovement(input->GetXOffset(), input->GetYOffset());
+
   std::map<InputMoveDirection, InputMoveDirection> directions = input->GetMoveDirection();
   float offset = input->DeltaTime() * m_MoveSensitivity;
 
