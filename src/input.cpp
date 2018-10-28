@@ -3,21 +3,20 @@
 
 using namespace Eng;
 
-Input::Input(GLFWwindow *window): m_Window(window), m_IsFirstMouse(true) {}
+Input::Input(GLFWwindow *window): m_Window(window), m_IsFirstMouse(true),
+                                  m_MouseSensitivity(0.05f),
+                                  m_OriginMoveSensitivity(5.0f)
+{
+  m_MoveSensitivity = m_OriginMoveSensitivity;
+}
 
 Input::~Input() {}
 
 void Input::Process(float deltaTime) {
   m_DeltaTime = deltaTime;
-  m_Keys.clear();
 
-  for(int key = GLFW_KEY_A; key <= GLFW_KEY_Z; key++) {
-    if (glfwGetKey(m_Window, key) == GLFW_PRESS) {
-      m_Keys[key] = key;
-    }
-  }
-
-  updateCoursor();
+  processKeyboard();
+  processMouse();
 }
 
 std::map<InputMoveDirection, InputMoveDirection> Input::GetMoveDirection() const {
@@ -42,7 +41,7 @@ std::map<InputMoveDirection, InputMoveDirection> Input::GetMoveDirection() const
   return directions;
 }
 
-void Input::updateCoursor() {
+void Input::processMouse() {
   double xpos, ypos;
   glfwGetCursorPos(m_Window, &xpos, &ypos);
 
@@ -57,4 +56,20 @@ void Input::updateCoursor() {
 
   m_XCoursor = xpos;
   m_YCoursor = ypos;
+}
+
+void Input::processKeyboard() {
+  m_Keys.clear();
+
+  for(int key = GLFW_KEY_A; key <= GLFW_KEY_Z; key++) {
+    if (glfwGetKey(m_Window, key) == GLFW_PRESS) {
+      m_Keys[key] = key;
+    }
+  }
+
+  if (glfwGetKey(m_Window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) {
+    m_MoveSensitivity = m_OriginMoveSensitivity * 5;
+  } else {
+    m_MoveSensitivity = m_OriginMoveSensitivity;
+  }
 }

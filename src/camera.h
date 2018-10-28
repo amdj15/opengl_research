@@ -11,8 +11,6 @@ namespace Eng {
       glm::vec3 m_Up;
       float m_Yaw;
       float m_Pitch;
-      float m_MouseSensitivity;
-      float m_MoveSensitivity;
 
     public:
       Camera();
@@ -30,6 +28,6 @@ namespace Eng {
       void backward(float offset);
       void left(float offset);
       void right(float offset);
-      void processMouseMovement(float xOffset, float yOffset);
+      void processMouseMovement(float xOffset, float yOffset, float mouseSensitivity);
   };
 }

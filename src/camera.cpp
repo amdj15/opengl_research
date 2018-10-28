@@ -7,9 +7,7 @@ Camera::Camera(): m_Position(0.0f, 0.0f, 3.0f),
                   m_ViewDirection(0.0f, 0.0f, -1.0f),
                   m_Up(0.0f, 1.0f, 0.0f),
                   m_Yaw(-90.0f),
-                  m_Pitch(0.0f),
-                  m_MouseSensitivity(0.05f),
-                  m_MoveSensitivity(5.0f) {}
+                  m_Pitch(0.0f) {}
 
 Camera::~Camera() {}
 
@@ -18,10 +16,10 @@ glm::mat4 Camera::ViewMatrix() const {
 }
 
 void Camera::Update(const Input* input) {
-  processMouseMovement(input->GetXOffset(), input->GetYOffset());
+  processMouseMovement(input->GetXOffset(), input->GetYOffset(), input->GetMouseSensitivity());
 
   std::map<InputMoveDirection, InputMoveDirection> directions = input->GetMoveDirection();
-  float offset = input->DeltaTime() * m_MoveSensitivity;
+  float offset = input->DeltaTime() * input->GetMoveSensitivity();
 
   if (directions.count(InputMoveDirection::BACKWARD) > 0) {
     backward(offset);
@@ -66,9 +64,9 @@ void Camera::right(float offset) {
   m_Position += glm::normalize(glm::cross(m_ViewDirection, m_Up)) * offset;
 }
 
-void Camera::processMouseMovement(float xOffset, float yOffset) {
-  xOffset *= m_MouseSensitivity;
-  yOffset *= m_MouseSensitivity;
+void Camera::processMouseMovement(float xOffset, float yOffset, float mouseSensitivity) {
+  xOffset *= mouseSensitivity;
+  yOffset *= mouseSensitivity;
 
   m_Yaw += xOffset;
   m_Pitch += yOffset;
