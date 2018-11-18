@@ -1,4 +1,5 @@
 #include "scene.h"
+#include "ecs/components/position_component.h"
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
@@ -7,6 +8,11 @@ using namespace Eng;
 void Scene::AddGameObject(ShGameObject gameObject) {
   gameObject->Init();
   m_GameObjects.push_back(gameObject);
+
+  ECS::Entity* entity = m_EntitieManager.CreateEntity();
+  entity->AddComponent<ECS::PositionComponent>();
+
+  gameObject->SetEntity(entity);
 }
 
 void Scene::Render(Graphic::Renderer *renderer) {

@@ -4,6 +4,7 @@
 #include "camera.h"
 #include "graphic/renderer.h"
 #include "input.h"
+#include "ecs/manager.h"
 
 namespace Eng {
   class Scene {
@@ -11,6 +12,7 @@ namespace Eng {
       Camera m_Camera;
       std::vector<ShGameObject> m_GameObjects;
       glm::mat4 m_Projection;
+      Eng::ECS::Manager m_EntitieManager;
 
     public:
       Scene() = default;

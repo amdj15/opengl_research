@@ -1,6 +1,7 @@
 #pragma once
 #include "graphic/shader.h"
 #include "model.h"
+#include "ecs/entity.h"
 #include <memory>
 
 namespace Eng {
@@ -9,6 +10,7 @@ namespace Eng {
       Graphic::Shader *m_Shader;
       Model *m_Model;
       glm::mat4 m_Matrix;
+      ECS::Entity* m_Entity;
 
     public:
       GameObject(const std::string &pathToFile);
@@ -20,6 +22,7 @@ namespace Eng {
       inline Model* GetModel() const { return m_Model; }
       inline Graphic::Shader* GetShader() const { return m_Shader; }
       inline glm::mat4 GetModelMatrix() const { return m_Matrix; }
+      inline void SetEntity(ECS::Entity* entity) { m_Entity = entity; }
   };
 }
 

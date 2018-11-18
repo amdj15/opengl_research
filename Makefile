@@ -26,6 +26,8 @@ SOURCE_FILES=$(wildcard $(SRC)/app/*.cpp) \
 						 $(wildcard $(SRC)/devices/opengl/*.cpp) \
 						 $(wildcard $(SRC)/graphic/api/*.cpp) \
 						 $(wildcard $(SRC)/graphic/*.cpp) \
+						 $(wildcard $(SRC)/ecs/components/*cpp) \
+						 $(wildcard $(SRC)/ecs/*cpp) \
 						 $(wildcard $(SRC)/*.cpp)
 
 OBJECT_FILES=$(SOURCE_FILES:%.cpp=$(OBJ)/%.o)
