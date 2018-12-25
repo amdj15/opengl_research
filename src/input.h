@@ -9,7 +9,6 @@ namespace Eng {
   class Input {
     private:
       GLFWwindow *m_Window;
-      std::map<int, int> m_Keys;
       float m_DeltaTime;
       double m_XCoursor;
       double m_YCoursor;
@@ -21,6 +20,8 @@ namespace Eng {
       float m_OriginMoveSensitivity;
 
     public:
+      std::map<int, int> m_Keys;
+
       Input(GLFWwindow *window);
       ~Input();
 

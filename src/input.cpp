@@ -61,7 +61,7 @@ void Input::processMouse() {
 void Input::processKeyboard() {
   m_Keys.clear();
 
-  for(int key = GLFW_KEY_A; key <= GLFW_KEY_Z; key++) {
+  for(int key = GLFW_KEY_SPACE; key <= GLFW_KEY_Z; key++) {
     if (glfwGetKey(m_Window, key) == GLFW_PRESS) {
       m_Keys[key] = key;
     }
