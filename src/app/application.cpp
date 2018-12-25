@@ -1,6 +1,9 @@
 #include "application.h"
+#include "../utils/logger.h"
 
-Application::Application(std::string title): m_Window(title), m_Input(nullptr) {}
+Application::Application(std::string title): m_Window(title), m_Input(nullptr) {
+  Eng::Utils::Logger::Init();
+}
 
 Application::~Application() {
   delete m_Renderer;
@@ -46,7 +49,7 @@ void Application::Run() {
     framesCnt++;
 
     if (currentTime - time > 1.0f) {
-      printf("frames: %i, updates: %i \n", framesCnt, updatesCnt);
+      LOG_INFO("frames: {}, updates: {}", framesCnt, updatesCnt);
 
       framesCnt = 0;
       updatesCnt = 0;

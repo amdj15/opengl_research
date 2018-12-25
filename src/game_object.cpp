@@ -1,4 +1,5 @@
 #include "game_object.h"
+#include "utils/logger.h"
 
 using namespace Eng;
 
@@ -14,10 +15,10 @@ GameObject::GameObject(const std::string &pathToFile, const std::string &shaderF
 }
 
 GameObject::~GameObject() {
-  printf("game object was deleted \n");
-
   delete m_Model;
   delete m_Shader;
+
+  LOG_DEBUG("game object was deleted");
 }
 
 void GameObject::Init() {

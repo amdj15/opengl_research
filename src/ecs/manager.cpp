@@ -1,4 +1,5 @@
 #include "manager.h"
+#include "../utils/logger.h"
 
 using namespace Eng;
 using namespace ECS;
@@ -10,7 +11,7 @@ Manager::~Manager() {
     delete item.second;
   }
 
-  printf("Entity manager was deleted\n");
+  LOG_DEBUG("Entity manager was deleted");
 }
 
 Entity* Manager::CreateEntity() {

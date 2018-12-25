@@ -1,5 +1,5 @@
 #include "assimp_loader.h"
-#include <iostream>
+#include "../utils/logger.h"
 
 AssimpLoader::AssimpLoader(std::string pathToFile, std::string directory) {
   m_PathToFile = pathToFile;
@@ -20,7 +20,7 @@ void AssimpLoader::Load() {
                                           );
 
   if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) {
-    std::cout << "ERROR::ASSIMP::" << importer.GetErrorString() << std::endl;
+    LOG_ERROR("ERROR::ASSIMP::{}", importer.GetErrorString());
     return;
   }
 
@@ -100,7 +100,7 @@ void AssimpLoader::processMesh(const aiMesh* mesh, const aiScene *scene) {
   m_Textures.push_back(textures);
   m_Materials.push_back(this->processMaterials(material));
 
-  std::cout << "vertices number: " << mesh->mNumVertices << ", indexes: " << indexes.size() << std::endl;
+  LOG_DEBUG("vertices number: {}, indexes: {}", mesh->mNumVertices, indexes.size());
 }
 
 bool AssimpLoader::loadTexture(const aiMaterial *material, aiTextureType type, std::string typeName, std::map<std::string, MeshTexture> &textures, unsigned int slot) {

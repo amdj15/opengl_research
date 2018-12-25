@@ -16,6 +16,7 @@
         "utility": "cpp",
         "string": "cpp",
         "map": "cpp",
-        "memory": "cpp"
+        "memory": "cpp",
+        "iostream": "cpp"
     }
 }

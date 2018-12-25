@@ -1,35 +1,6 @@
 #include "model.h"
 #include "loaders/assimp_loader.h"
-#include <iostream>
-
-std::ostream& operator<<(std::ostream& os, const Mesh &m) {
-  os << "Indexes size: " << m.m_Indices.size() << std::endl;
-  os << "Vertexes size: " << m.m_Vertices.size() << std::endl;
-
-  os << "Indexes array: {" << std::endl;
-
-  for (unsigned int i = 0; i < m.m_Indices.size(); i++) {
-    os << "  " << m.m_Indices[i] << ", ";
-  }
-
-  os << "\n}" << std::endl;
-  os << "Vetexes: {" << std::endl;
-
-  for (unsigned int i = 0; i < m.m_Vertices.size(); i++) {
-    os << "  " << m.m_Vertices[i].Position.x << ", "
-       << m.m_Vertices[i].Position.y << ", "
-       << m.m_Vertices[i].Position.z << ", "
-       << m.m_Vertices[i].Normal.x << ", "
-       << m.m_Vertices[i].Normal.y << ", "
-       << m.m_Vertices[i].Normal.z;
-
-    os << std::endl;
-  }
-
-  os << "}" << std::endl;
-
-  return os;
-}
+#include "utils/logger.h"
 
 Model::Model() {}
 
@@ -41,7 +12,7 @@ Model::Model(const std::string &pathToFile): m_PathToFile(pathToFile) {
 Model::~Model() {
   delete m_Loader;
 
-  std::cout << "Delete model " << m_PathToFile << std::endl;
+  LOG_DEBUG("Delete model {}", m_PathToFile);
 
   for (unsigned int i = 0; i < m_Meshes.size(); i++) {
     delete m_Meshes[i];
@@ -64,6 +35,6 @@ void Model::Load() {
     m_Meshes.push_back(mesh);
   }
 
-  std::cout << "Model has " << m_Meshes.size() << " meshses" << std::endl;
+  LOG_DEBUG("Model has {} meshses", m_Meshes.size());
 }
 

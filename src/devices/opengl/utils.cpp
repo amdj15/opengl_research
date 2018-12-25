@@ -1,5 +1,5 @@
 #include "common.h"
-#include <iostream>
+#include "../../utils/logger.h"
 
 void GLCleanError() {
   while(glGetError() != GL_NO_ERROR);
@@ -7,8 +7,7 @@ void GLCleanError() {
 
 bool GLLogError(const char* func, const char* file, int line) {
   while(GLenum error = glGetError()) {
-    std::cout << "[OpenGL ERROR]: CODE " << error << " in " << func << " " << file << ":" << line << std::endl;
-
+    LOG_ERROR("[OpenGL ERROR]: CODE {0} in {1} {2}:{3}", error, func, file, line);
     return true;
   }
 

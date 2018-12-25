@@ -1,5 +1,6 @@
 #include "entity.h"
 #include "components/position_component.h"
+#include "../utils/logger.h"
 
 using namespace Eng;
 using namespace ECS;
@@ -13,7 +14,7 @@ Entity::~Entity() {
     delete m_Components[i];
   }
 
-  printf("Entity %i was deleted\n", m_Id);
+  LOG_DEBUG("Entity {} was deleted", m_Id);
 }
 
 int Entity::getUniqComponentId() {
