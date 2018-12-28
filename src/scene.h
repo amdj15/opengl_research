@@ -5,6 +5,7 @@
 #include "graphic/renderer.h"
 #include "input.h"
 #include "ecs/manager.h"
+// #include "ecs/systems/system.h"
 
 namespace Eng {
   class Scene {
@@ -13,6 +14,7 @@ namespace Eng {
       std::vector<ShGameObject> m_GameObjects;
       glm::mat4 m_Projection;
       Eng::ECS::Manager m_EntitieManager;
+      // std::vector<Eng::ECS::System*> m_Systems;
 
     public:
       Scene() = default;

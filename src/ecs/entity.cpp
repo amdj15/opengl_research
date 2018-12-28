@@ -10,11 +10,11 @@ Entity::Entity() {
 }
 
 Entity::~Entity() {
-  for(int i = 0; i < m_Components.size(); i++) {
-    delete m_Components[i];
+  if (hasComponent<PositionComponent>()) {
+    delete m_Components[getComponentTypeId<PositionComponent>()];
   }
 
-  LOG_DEBUG("Entity {} was deleted", m_Id);
+  LOG_WARN("Check entity delete, need refactor! {}", m_Id);
 }
 
 int Entity::getUniqComponentId() {

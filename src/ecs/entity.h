@@ -2,7 +2,7 @@
 
 #include <bitset>
 #include "components/component.h"
-#include <vector>
+#include <array>
 
 namespace Eng {
   namespace ECS {
@@ -14,7 +14,7 @@ namespace Eng {
 
       private:
         int m_Id;
-        std::vector<Component<Entity>*> m_Components;
+        std::array<Component<Entity>*, MAX_COMPONENTS_LENGTH> m_Components;
         std::bitset<Entity::MAX_COMPONENTS_LENGTH> m_ComponentsBitset;
 
       public:
@@ -22,6 +22,7 @@ namespace Eng {
         ~Entity();
 
         inline int GetId() { return m_Id; }
+        inline std::array<Component<Entity>*, MAX_COMPONENTS_LENGTH>& GetComponents() { return m_Components; }
 
       private:
         static int getUniqComponentId();
@@ -31,15 +32,12 @@ namespace Eng {
           T* component = new T();
 
           m_ComponentsBitset[getComponentTypeId<T>()] = true;
-          m_Components.push_back(component);
+          m_Components[getComponentTypeId<T>()] = component;
 
           component->SetTypeId(getComponentTypeId<T>());
           component->SetEntity(this);
           component->Init();
         }
-
-      private:
-        template<typename T> inline bool hasComponent() const { return m_ComponentsBitset[getComponentTypeId<T>()]; }
 
         template<typename T> int getComponentTypeId() {
           static_assert(std::is_base_of<Component<Entity>, T>::value, "must be Component subtype");
@@ -47,6 +45,9 @@ namespace Eng {
           static int typeId = getUniqComponentId();
           return typeId;
         }
+
+      private:
+        template<typename T> inline bool hasComponent() { return m_ComponentsBitset[getComponentTypeId<T>()]; }
     };
   }
 }

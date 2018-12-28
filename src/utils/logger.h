@@ -1,3 +1,5 @@
+#pragma once
+
 #include "spdlog/spdlog.h"
 #include "spdlog/sinks/stdout_color_sinks.h"
 
@@ -15,6 +17,7 @@ namespace Eng {
   }
 }
 
+#define LOG_TRACE(...) Eng::Utils::Logger::GetLogger()->trace(__VA_ARGS__)
 #define LOG_DEBUG(...) Eng::Utils::Logger::GetLogger()->debug(__VA_ARGS__)
 #define LOG_INFO(...) Eng::Utils::Logger::GetLogger()->info(__VA_ARGS__)
 #define LOG_WARN(...) Eng::Utils::Logger::GetLogger()->warn(__VA_ARGS__)

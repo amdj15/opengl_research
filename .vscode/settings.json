@@ -17,6 +17,8 @@
         "string": "cpp",
         "map": "cpp",
         "memory": "cpp",
-        "iostream": "cpp"
+        "iostream": "cpp",
+        "array": "cpp",
+        "bitset": "cpp"
     }
 }
