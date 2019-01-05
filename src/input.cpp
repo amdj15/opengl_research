@@ -1,4 +1,6 @@
 #include "input.h"
+#include "events/arrow_pressed_event.h"
+#include "events/dispatcher.h"
 
 using namespace Eng;
 
@@ -64,6 +66,22 @@ void Input::processKeyboard() {
     if (glfwGetKey(m_Window, key) == GLFW_PRESS) {
       m_Keys[key] = key;
     }
+  }
+
+  for(int key = GLFW_KEY_RIGHT; key <= GLFW_KEY_UP; key++) {
+    std::string eventName = "ArrowKeyPressed";
+
+    if (glfwGetKey(m_Window, GLFW_KEY_LEFT) == GLFW_PRESS)
+      Events::Dispatcher::Emit(eventName, std::make_shared<Events::ArrowPressedEvent>(Events::Arrows::left));
+
+    if (glfwGetKey(m_Window, GLFW_KEY_RIGHT) == GLFW_PRESS)
+      Events::Dispatcher::Emit(eventName, std::make_shared<Events::ArrowPressedEvent>(Events::Arrows::right));
+
+    if (glfwGetKey(m_Window, GLFW_KEY_UP) == GLFW_PRESS)
+      Events::Dispatcher::Emit(eventName, std::make_shared<Events::ArrowPressedEvent>(Events::Arrows::up));
+
+    if (glfwGetKey(m_Window, GLFW_KEY_DOWN) == GLFW_PRESS)
+      Events::Dispatcher::Emit(eventName, std::make_shared<Events::ArrowPressedEvent>(Events::Arrows::down));
   }
 
   if (glfwGetKey(m_Window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) {

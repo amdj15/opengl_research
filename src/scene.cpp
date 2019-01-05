@@ -2,8 +2,19 @@
 #include "ecs/components/position_component.h"
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#include "ecs/systems/position_system.h"
 
 using namespace Eng;
+
+Scene::Scene() {
+  m_Systems.push_back(new ECS::PositionSystem());
+}
+
+Scene::~Scene() {
+  for (auto const &system : m_Systems) {
+    delete system;
+  }
+}
 
 void Scene::AddGameObject(ShGameObject gameObject) {
   gameObject->Init();
@@ -11,6 +22,10 @@ void Scene::AddGameObject(ShGameObject gameObject) {
 
   ECS::Entity* entity = m_EntitieManager.CreateEntity();
   entity->AddComponent<ECS::PositionComponent>();
+
+  for (auto const &system : m_Systems) {
+    system->AddEntity(entity);
+  }
 
   gameObject->SetEntity(entity);
 }

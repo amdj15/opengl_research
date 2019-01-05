@@ -12,7 +12,7 @@ class Application {
     Window m_Window;
     Graphic::Renderer *m_Renderer;
     void(*onRender)();
-    Eng::Scene m_Scene;
+    Eng::Scene* m_Scene;
     Eng::Input m_Input;
 
   public:

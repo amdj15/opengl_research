@@ -2,7 +2,6 @@
 #include "graphic/shader.h"
 #include "model.h"
 #include "ecs/entity.h"
-#include <memory>
 
 namespace Eng {
   class GameObject {
@@ -19,9 +18,10 @@ namespace Eng {
 
       void Init();
 
+      glm::mat4 GetModelMatrix();
+
       inline Model* GetModel() const { return m_Model; }
       inline Graphic::Shader* GetShader() const { return m_Shader; }
-      inline glm::mat4 GetModelMatrix() const { return m_Matrix; }
       inline void SetEntity(ECS::Entity* entity) { m_Entity = entity; }
       inline ECS::Entity* GetEntity() const { return m_Entity; }
   };

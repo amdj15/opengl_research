@@ -19,6 +19,7 @@
         "memory": "cpp",
         "iostream": "cpp",
         "array": "cpp",
-        "bitset": "cpp"
+        "bitset": "cpp",
+        "functional": "cpp"
     }
 }

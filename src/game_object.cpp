@@ -1,5 +1,7 @@
 #include "game_object.h"
 #include "utils/logger.h"
+#include "ecs/components/position_component.h"
+#include <glm/gtc/matrix_transform.hpp>
 
 using namespace Eng;
 
@@ -24,4 +26,21 @@ GameObject::~GameObject() {
 void GameObject::Init() {
   m_Model->Load();
   m_Shader->Init();
+}
+
+glm::mat4 GameObject::GetModelMatrix() {
+  auto components = m_Entity->GetComponents();
+  auto component = static_cast<ECS::PositionComponent*>(components[m_Entity->getComponentTypeId<ECS::PositionComponent>()]);
+
+  if (component->m_X == 0 && component->m_Y == 0 && component->m_Z == 0) {
+    return m_Matrix;
+  }
+
+  m_Matrix = glm::translate(m_Matrix, glm::vec3(component->m_X, component->m_Y, component->m_Z));
+
+  component->m_X = 0;
+  component->m_Y = 0;
+  component->m_Z = 0;
+
+  return m_Matrix;
 }

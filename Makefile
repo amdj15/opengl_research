@@ -30,6 +30,7 @@ SOURCE_FILES=$(wildcard $(SRC)/app/*.cpp) \
 						 $(wildcard $(SRC)/ecs/systems/*.cpp) \
 						 $(wildcard $(SRC)/ecs/*.cpp) \
 						 $(wildcard $(SRC)/utils/*.cpp) \
+						 $(wildcard $(SRC)/events/*.cpp) \
 						 $(wildcard $(SRC)/*.cpp)
 
 OBJECT_FILES=$(SOURCE_FILES:%.cpp=$(OBJ)/%.o)

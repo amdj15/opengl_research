@@ -4,7 +4,9 @@
 using namespace Eng;
 using namespace ECS;
 
-Manager::Manager() {}
+Manager::Manager() {
+  LOG_DEBUG("Entity manager was created");
+}
 
 Manager::~Manager() {
   for(auto const &item : m_Entities) {

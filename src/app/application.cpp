@@ -1,12 +1,13 @@
 #include "application.h"
 #include "../utils/logger.h"
 
-Application::Application(std::string title): m_Window(title), m_Input(nullptr) {
+Application::Application(std::string title): m_Window(title), m_Scene(nullptr), m_Input(nullptr) {
   Eng::Utils::Logger::Init();
 }
 
 Application::~Application() {
   delete m_Renderer;
+  delete m_Scene;
 }
 
 void Application::Init(void(*inintScene)(Eng::Scene*)) {
@@ -15,12 +16,12 @@ void Application::Init(void(*inintScene)(Eng::Scene*)) {
   m_Window.Init(api);
   Graphic::CreateContext(api);
   m_Renderer = Graphic::Renderer::Create(api);
-  m_Scene = Eng::Scene();
+  m_Scene = new Eng::Scene();
   m_Input = Eng::Input(m_Window.getGlfwWindow());
 
-  inintScene(&m_Scene);
+  inintScene(m_Scene);
 
-  m_Scene.SetProjection(m_Window.getWidth(), m_Window.getHeight());
+  m_Scene->SetProjection(m_Window.getWidth(), m_Window.getHeight());
 }
 
 void Application::Run() {
@@ -61,7 +62,7 @@ void Application::Run() {
 void Application::render() {
   m_Renderer->Clear();
 
-  m_Scene.Render(m_Renderer);
+  m_Scene->Render(m_Renderer);
 
   m_Window.swapBuffers();
   m_Window.pollEvents();
@@ -69,5 +70,5 @@ void Application::render() {
 
 void Application::update(float deltaTime) {
   m_Input.Process(deltaTime);
-  m_Scene.Update(&m_Input);
+  m_Scene->Update(&m_Input);
 }

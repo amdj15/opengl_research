@@ -2,11 +2,17 @@
 
 #include "system.h"
 #include "../components/position_component.h"
+#include "../../events/arrow_pressed_event.h"
+#include "../../events/dispatcher.h"
 
 namespace Eng {
   namespace ECS {
     class PositionSystem : public System {
-      void Process(Entity* entity, float x, float y, float z) const;
+      public:
+        PositionSystem();
+        ~PositionSystem();
+
+        void Process(SharedEvent event);
     };
   }
 }
