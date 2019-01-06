@@ -3,8 +3,8 @@
 using namespace Eng;
 using namespace Events;
 
-ArrowPressedEvent::ArrowPressedEvent(Arrows arrow): Event("arrow_pressed"), m_Arrow(arrow) {}
-ArrowPressedEvent::ArrowPressedEvent(): Event("arrow_pressed") {}
+ArrowPressedEvent::ArrowPressedEvent(Arrows arrow): m_Arrow(arrow) {}
+ArrowPressedEvent::ArrowPressedEvent() {}
 
 ArrowPressedEvent::~ArrowPressedEvent() {
   LOG_DEBUG("EVENT {} was deleted", this->GetName());

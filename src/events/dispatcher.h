@@ -12,6 +12,7 @@ namespace Eng {
 
       public:
         static void AddEventListener(std::string eventName, std::function<void(SharedEvent event)> fn);
+        static void RemoveEventListener(std::string eventName, std::function<void(SharedEvent event)> fn);
         static void Emit(std::string eventName, SharedEvent event);
     };
   }

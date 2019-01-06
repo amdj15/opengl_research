@@ -84,6 +84,10 @@ void Input::processKeyboard() {
       Events::Dispatcher::Emit(eventName, std::make_shared<Events::ArrowPressedEvent>(Events::Arrows::down));
   }
 
+  if (glfwGetKey(m_Window, GLFW_KEY_BACKSPACE) == GLFW_PRESS)
+    Events::Dispatcher::Emit("popLastGameObject", std::make_shared<Events::Event>());
+
+
   if (glfwGetKey(m_Window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) {
     m_MoveSensitivity = m_OriginMoveSensitivity * 5;
   } else {

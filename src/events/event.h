@@ -10,10 +10,11 @@ namespace Eng {
         std::string m_Name;
 
       public:
-        Event(std::string name);
+        Event();
         ~Event();
 
         inline std::string& GetName() { return m_Name; }
+        inline void SetName(const std::string &name) { m_Name = name; }
     };
   }
 }

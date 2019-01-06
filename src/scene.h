@@ -25,5 +25,6 @@ namespace Eng {
 
       void Update(const Input* input);
       void SetProjection(float width, float height);
+      void PopGameObject();
   };
 }

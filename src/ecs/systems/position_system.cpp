@@ -14,6 +14,8 @@ PositionSystem::PositionSystem() {
 
 PositionSystem::~PositionSystem() {
   LOG_DEBUG("Position system was deleted");
+
+  Events::Dispatcher::RemoveEventListener("ArrowKeyPressed", std::bind(&PositionSystem::Process, this, _1));
 }
 
 void PositionSystem::Process(SharedEvent e) {

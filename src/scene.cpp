@@ -3,17 +3,22 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include "ecs/systems/position_system.h"
+#include "events/dispatcher.h"
 
 using namespace Eng;
 
 Scene::Scene() {
   m_Systems.push_back(new ECS::PositionSystem());
+
+  Events::Dispatcher::AddEventListener("popLastGameObject", std::bind(&Scene::PopGameObject, this));
 }
 
 Scene::~Scene() {
   for (auto const &system : m_Systems) {
     delete system;
   }
+
+  Events::Dispatcher::RemoveEventListener("popLastGameObject", std::bind(&Scene::PopGameObject, this));
 }
 
 void Scene::AddGameObject(ShGameObject gameObject) {
@@ -44,12 +49,6 @@ void Scene::Render(Graphic::Renderer *renderer) {
 void Scene::Update(const Input* input) {
   m_Camera.Update(input);
 
-  if (input->m_Keys.count(GLFW_KEY_SPACE) > 0) {
-    int index = 0;
-    m_EntitieManager.RemoveEntity(m_GameObjects[index]->GetEntity());
-    m_GameObjects.erase(m_GameObjects.begin() + index);
-  }
-
   std::map<Graphic::Shader*, std::vector<ShGameObject>> gameObjectsShadersMap;
   for(ShGameObject gameObject : m_GameObjects) {
     gameObjectsShadersMap[gameObject->GetShader()].push_back(gameObject);
@@ -72,4 +71,9 @@ void Scene::Update(const Input* input) {
 
 void Scene::SetProjection(float width, float height) {
   m_Projection = glm::perspective(glm::radians(45.0f), width / height, 1.0f, 1000.0f);
+}
+
+void Scene::PopGameObject() {
+  m_EntitieManager.RemoveEntity(m_GameObjects[0]->GetEntity());
+  m_GameObjects.erase(m_GameObjects.begin());
 }
