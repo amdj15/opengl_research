@@ -8,12 +8,18 @@
 namespace Eng {
   namespace ECS {
     class MovementSystem : public System {
+      private:
+        static std::vector<int> m_MoveableEntitiesIds;
+
       public:
         MovementSystem();
         ~MovementSystem();
 
         void OnArrowKeyPressed(SharedEvent event);
         void Update() override;
+
+        static void SubscribeEntityToMoveByArrows(int id);
+        static void UnsubscribeEntityToMoveByArrows(int id);
     };
   }
 }

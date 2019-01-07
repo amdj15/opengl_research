@@ -1,6 +1,7 @@
 #include "app/application.h"
 #include "game_object.h"
 #include "scene.h"
+#include "ecs/systems/movement_system.h"
 
 static void initScene(Eng::Scene *scene) {
   ShGameObject chel = std::make_shared<Eng::GameObject>("chel.Obj", "shaders/simple.glsl");
@@ -12,6 +13,8 @@ static void initScene(Eng::Scene *scene) {
   scene->AddGameObject(lamp);
   scene->AddGameObject(bunny);
   scene->AddGameObject(drag);
+
+  Eng::ECS::MovementSystem::SubscribeEntityToMoveByArrows(chel->GetEntity()->GetId());
 }
 
 int main()

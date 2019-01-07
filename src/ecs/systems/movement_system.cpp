@@ -19,24 +19,44 @@ MovementSystem::~MovementSystem() {
 void MovementSystem::Update() {}
 
 void MovementSystem::OnArrowKeyPressed(SharedEvent e) {
-  auto entity = m_Entities[0];
-  auto components = entity->GetComponents();
+  for(auto &entity : m_Entities) {
+    auto it = std::find(MovementSystem::m_MoveableEntitiesIds.begin(), MovementSystem::m_MoveableEntitiesIds.end(), entity->GetId());
+    if (it == MovementSystem::m_MoveableEntitiesIds.end()) {
+      continue;
+    }
 
-  PositionComponent* component = static_cast<PositionComponent*>(components[entity->getComponentTypeId<PositionComponent>()]);
-  auto event = std::static_pointer_cast<Events::ArrowPressedEvent>(e);
+    auto components = entity->GetComponents();
+    PositionComponent* component = static_cast<PositionComponent*>(components[entity->getComponentTypeId<PositionComponent>()]);
 
-  switch(event->GetArrow()) {
-    case Events::Arrows::left:
-      component->m_X++;
-      break;
-    case Events::Arrows::right:
-      component->m_X--;
-      break;
-    case Events::Arrows::up:
-      component->m_Z++;
-      break;
-    case Events::Arrows::down:
-      component->m_Z--;
-      break;
+    auto event = std::static_pointer_cast<Events::ArrowPressedEvent>(e);
+
+    switch(event->GetArrow()) {
+      case Events::Arrows::left:
+        component->m_X++;
+        break;
+      case Events::Arrows::right:
+        component->m_X--;
+        break;
+      case Events::Arrows::up:
+        component->m_Z++;
+        break;
+      case Events::Arrows::down:
+        component->m_Z--;
+        break;
+    }
+  }
+}
+
+std::vector<int> MovementSystem::m_MoveableEntitiesIds;
+
+void MovementSystem::SubscribeEntityToMoveByArrows(int id) {
+  m_MoveableEntitiesIds.push_back(id);
+}
+
+void MovementSystem::UnsubscribeEntityToMoveByArrows(int id) {
+  auto it = std::find(m_MoveableEntitiesIds.begin(), m_MoveableEntitiesIds.end(), id);
+
+  if (it != m_MoveableEntitiesIds.end()) {
+    m_MoveableEntitiesIds.erase(it);
   }
 }
