@@ -7,12 +7,13 @@
 
 namespace Eng {
   namespace ECS {
-    class PositionSystem : public System {
+    class MovementSystem : public System {
       public:
-        PositionSystem();
-        ~PositionSystem();
+        MovementSystem();
+        ~MovementSystem();
 
-        void Process(SharedEvent event);
+        void OnArrowKeyPressed(SharedEvent event);
+        void Update() override;
     };
   }
 }

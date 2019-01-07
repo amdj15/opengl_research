@@ -1,24 +1,24 @@
-#include "position_system.h"
+#include "movement_system.h"
 #include "../../utils/logger.h"
 
 using namespace Eng;
 using namespace ECS;
 
-using namespace std::placeholders;
-
-PositionSystem::PositionSystem() {
+MovementSystem::MovementSystem() {
   LOG_DEBUG("Position system was created");
 
-  Events::Dispatcher::AddEventListener("ArrowKeyPressed", std::bind(&PositionSystem::Process, this, _1));
+  Events::Dispatcher::AddEventListener("ArrowKeyPressed", std::bind(&MovementSystem::OnArrowKeyPressed, this, std::placeholders::_1));
 }
 
-PositionSystem::~PositionSystem() {
+MovementSystem::~MovementSystem() {
   LOG_DEBUG("Position system was deleted");
 
-  Events::Dispatcher::RemoveEventListener("ArrowKeyPressed", std::bind(&PositionSystem::Process, this, _1));
+  Events::Dispatcher::RemoveEventListener("ArrowKeyPressed", std::bind(&MovementSystem::OnArrowKeyPressed, this, std::placeholders::_1));
 }
 
-void PositionSystem::Process(SharedEvent e) {
+void MovementSystem::Update() {}
+
+void MovementSystem::OnArrowKeyPressed(SharedEvent e) {
   auto entity = m_Entities[0];
   auto components = entity->GetComponents();
 

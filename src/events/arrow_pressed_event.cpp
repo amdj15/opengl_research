@@ -7,5 +7,5 @@ ArrowPressedEvent::ArrowPressedEvent(Arrows arrow): m_Arrow(arrow) {}
 ArrowPressedEvent::ArrowPressedEvent() {}
 
 ArrowPressedEvent::~ArrowPressedEvent() {
-  LOG_DEBUG("EVENT {} was deleted", this->GetName());
+  LOG_TRACE("EVENT {} was deleted", this->GetName());
 }

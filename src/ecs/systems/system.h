@@ -13,6 +13,8 @@ namespace Eng {
         System() = default;
         virtual ~System() = default;
 
+        virtual void Update() = 0;
+
         void AddEntity(Entity* entity);
     };
   }

@@ -2,13 +2,13 @@
 #include "ecs/components/position_component.h"
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
-#include "ecs/systems/position_system.h"
+#include "ecs/systems/movement_system.h"
 #include "events/dispatcher.h"
 
 using namespace Eng;
 
 Scene::Scene() {
-  m_Systems.push_back(new ECS::PositionSystem());
+  m_Systems.push_back(new ECS::MovementSystem());
 
   Events::Dispatcher::AddEventListener("popLastGameObject", std::bind(&Scene::PopGameObject, this));
 }

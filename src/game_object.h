@@ -8,7 +8,6 @@ namespace Eng {
     private:
       Graphic::Shader *m_Shader;
       Model *m_Model;
-      glm::mat4 m_Matrix;
       ECS::Entity* m_Entity;
 
     public:
