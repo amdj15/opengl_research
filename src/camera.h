@@ -1,7 +1,8 @@
 #pragma once
 
 #include <glm/glm.hpp>
-#include "input.h"
+#include "events/types/move_camera_event.h"
+#include <map>
 
 namespace Eng {
   class Camera {
@@ -12,6 +13,8 @@ namespace Eng {
       float m_Yaw;
       float m_Pitch;
 
+      std::map<std::string, std::function<void(float)>> m_MovementFnPtrs;
+
     public:
       Camera();
       ~Camera();
@@ -19,7 +22,8 @@ namespace Eng {
 
       inline glm::vec3 GetPosition() const { return m_Position; }
 
-      void Update(const Input* input);
+      void OnCameraMouseMove(SharedEvent event);
+      void OnCameraKeyboardMove(SharedEvent event);
 
     private:
       void updateCameraVectors();

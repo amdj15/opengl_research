@@ -1,5 +1,6 @@
 #include "input.h"
-#include "events/arrow_pressed_event.h"
+#include "events/types/arrow_pressed_event.h"
+#include "events/types/move_camera_event.h"
 #include "events/dispatcher.h"
 
 using namespace Eng;
@@ -9,6 +10,11 @@ Input::Input(GLFWwindow *window): m_Window(window), m_IsFirstMouse(true),
                                   m_OriginMoveSensitivity(5.0f)
 {
   m_MoveSensitivity = m_OriginMoveSensitivity;
+
+  m_MoveDirectionsKeys[GLFW_KEY_A] = "left";
+  m_MoveDirectionsKeys[GLFW_KEY_D] = "right";
+  m_MoveDirectionsKeys[GLFW_KEY_S] = "backward";
+  m_MoveDirectionsKeys[GLFW_KEY_W] = "forward";
 }
 
 Input::~Input() {}
@@ -18,28 +24,7 @@ void Input::Process(float deltaTime) {
 
   processKeyboard();
   processMouse();
-}
-
-std::map<InputMoveDirection, InputMoveDirection> Input::GetMoveDirection() const {
-  std::map<InputMoveDirection, InputMoveDirection> directions;
-
-  if (m_Keys.count(GLFW_KEY_W) > 0) {
-    directions[InputMoveDirection::FORWARD] = InputMoveDirection::FORWARD;
-  }
-
-  if (m_Keys.count(GLFW_KEY_S) > 0) {
-    directions[InputMoveDirection::BACKWARD] = InputMoveDirection::BACKWARD;
-  }
-
-  if (m_Keys.count(GLFW_KEY_A) > 0) {
-    directions[InputMoveDirection::LEFT] = InputMoveDirection::LEFT;
-  }
-
-  if (m_Keys.count(GLFW_KEY_D) > 0) {
-    directions[InputMoveDirection::RIGHT] = InputMoveDirection::RIGHT;
-  }
-
-  return directions;
+  dispatchEvents();
 }
 
 void Input::processMouse() {
@@ -68,6 +53,19 @@ void Input::processKeyboard() {
     }
   }
 
+  if (glfwGetKey(m_Window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) {
+    m_MoveSensitivity = m_OriginMoveSensitivity * 5;
+  } else {
+    m_MoveSensitivity = m_OriginMoveSensitivity;
+  }
+}
+
+void Input::dispatchEvents() {
+  if (m_XCoursorOffset != 0 || m_YCoursorOffset != 0) {
+    auto moveCameraMouseEvent = std::make_shared<Events::MoveCameraEvent>(m_XCoursorOffset, m_YCoursorOffset, m_MouseSensitivity);
+    Eng::Events::Dispatcher::Emit("moveCameraMouse", moveCameraMouseEvent);
+  }
+
   for(int key = GLFW_KEY_RIGHT; key <= GLFW_KEY_UP; key++) {
     std::string eventName = "ArrowKeyPressed";
 
@@ -84,13 +82,16 @@ void Input::processKeyboard() {
       Events::Dispatcher::Emit(eventName, std::make_shared<Events::ArrowPressedEvent>(Events::Arrows::down));
   }
 
-  if (glfwGetKey(m_Window, GLFW_KEY_BACKSPACE) == GLFW_PRESS)
+  for(auto const &item : m_MoveDirectionsKeys) {
+    if (glfwGetKey(m_Window, item.first) == GLFW_PRESS) {
+      auto moveCameraKeyboardEvent = std::make_shared<Events::MoveCameraEvent>(0, 0, m_MoveSensitivity);
+      moveCameraKeyboardEvent->direction = item.second;
+      moveCameraKeyboardEvent->deltaTime = m_DeltaTime;
+      Events::Dispatcher::Emit("moveCameraKeyboard", moveCameraKeyboardEvent);
+    }
+  }
+
+  if (glfwGetKey(m_Window, GLFW_KEY_BACKSPACE) == GLFW_PRESS) {
     Events::Dispatcher::Emit("popLastGameObject", std::make_shared<Events::Event>());
-
-
-  if (glfwGetKey(m_Window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) {
-    m_MoveSensitivity = m_OriginMoveSensitivity * 5;
-  } else {
-    m_MoveSensitivity = m_OriginMoveSensitivity;
   }
 }

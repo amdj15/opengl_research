@@ -47,8 +47,6 @@ void Scene::Render(Graphic::Renderer *renderer) {
 }
 
 void Scene::Update(const Input* input) {
-  m_Camera.Update(input);
-
   std::map<Graphic::Shader*, std::vector<ShGameObject>> gameObjectsShadersMap;
   for(ShGameObject gameObject : m_GameObjects) {
     gameObjectsShadersMap[gameObject->GetShader()].push_back(gameObject);

@@ -1,5 +1,6 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include "camera.h"
+#include "events/dispatcher.h"
 
 using namespace Eng;
 
@@ -7,35 +8,35 @@ Camera::Camera(): m_Position(0.0f, 0.0f, 3.0f),
                   m_ViewDirection(0.0f, 0.0f, -1.0f),
                   m_Up(0.0f, 1.0f, 0.0f),
                   m_Yaw(-90.0f),
-                  m_Pitch(0.0f) {}
+                  m_Pitch(0.0f)
+{
+  m_MovementFnPtrs["forward"] = std::bind(&Camera::forward, this, std::placeholders::_1);
+  m_MovementFnPtrs["backward"] = std::bind(&Camera::backward, this, std::placeholders::_1);
+  m_MovementFnPtrs["left"] = std::bind(&Camera::left, this, std::placeholders::_1);
+  m_MovementFnPtrs["right"] = std::bind(&Camera::right, this, std::placeholders::_1);
 
-Camera::~Camera() {}
+  Events::Dispatcher::AddEventListener("moveCameraMouse", std::bind(&Camera::OnCameraMouseMove, this, std::placeholders::_1));
+  Events::Dispatcher::AddEventListener("moveCameraKeyboard", std::bind(&Camera::OnCameraKeyboardMove, this, std::placeholders::_1));
+}
+
+Camera::~Camera() {
+  Events::Dispatcher::RemoveEventListener("moveCameraMouse", std::bind(&Camera::OnCameraMouseMove, this, std::placeholders::_1));
+  Events::Dispatcher::RemoveEventListener("moveCameraKeyboard", std::bind(&Camera::OnCameraKeyboardMove, this, std::placeholders::_1));
+}
 
 glm::mat4 Camera::ViewMatrix() const {
   return glm::lookAt(m_Position, m_Position + m_ViewDirection, m_Up);
 }
 
-void Camera::Update(const Input* input) {
-  processMouseMovement(input->GetXOffset(), input->GetYOffset(), input->GetMouseSensitivity());
+void Camera::OnCameraMouseMove(SharedEvent e) {
+  auto event = std::static_pointer_cast<Eng::Events::MoveCameraEvent>(e);
+  processMouseMovement(event->xOffset, event->yOffset, event->sensetivity);
+  updateCameraVectors();
+}
 
-  std::map<InputMoveDirection, InputMoveDirection> directions = input->GetMoveDirection();
-  float offset = input->DeltaTime() * input->GetMoveSensitivity();
-
-  if (directions.count(InputMoveDirection::BACKWARD) > 0) {
-    backward(offset);
-  }
-
-  if (directions.count(InputMoveDirection::FORWARD) > 0) {
-    forward(offset);
-  }
-
-  if (directions.count(InputMoveDirection::LEFT) > 0) {
-    left(offset);
-  }
-
-  if (directions.count(InputMoveDirection::RIGHT) > 0) {
-    right(offset);
-  }
+void Camera::OnCameraKeyboardMove(SharedEvent e) {
+  auto event = std::static_pointer_cast<Eng::Events::MoveCameraEvent>(e);
+  m_MovementFnPtrs[event->direction](event->deltaTime * event->sensetivity);
 }
 
 void Camera::updateCameraVectors() {
@@ -78,6 +79,4 @@ void Camera::processMouseMovement(float xOffset, float yOffset, float mouseSensi
   if (m_Pitch < -89.0f) {
     m_Pitch = -89.0f;
   }
-
-  updateCameraVectors();
 }

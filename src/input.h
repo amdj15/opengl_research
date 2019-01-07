@@ -4,8 +4,6 @@
 #include <map>
 
 namespace Eng {
-  enum class InputMoveDirection { LEFT, RIGHT, FORWARD, BACKWARD, NONE };
-
   class Input {
     private:
       GLFWwindow *m_Window;
@@ -18,15 +16,14 @@ namespace Eng {
       float m_MouseSensitivity;
       float m_MoveSensitivity;
       float m_OriginMoveSensitivity;
+      std::map<int, int> m_Keys;
+      std::map<int, std::string> m_MoveDirectionsKeys;
 
     public:
-      std::map<int, int> m_Keys;
-
       Input(GLFWwindow *window);
       ~Input();
 
       void Process(float deltaTime);
-      std::map<InputMoveDirection, InputMoveDirection> GetMoveDirection() const;
 
       inline const float DeltaTime() const { return m_DeltaTime; }
       inline const double GetXOffset() const { return m_XCoursorOffset; }
@@ -37,5 +34,6 @@ namespace Eng {
     private:
       void processMouse();
       void processKeyboard();
+      void dispatchEvents();
   };
 }

@@ -1,5 +1,6 @@
 #include "application.h"
 #include "../utils/logger.h"
+#include "../events/dispatcher.h"
 
 Application::Application(std::string title): m_Window(title), m_Scene(nullptr), m_Input(nullptr) {
   Eng::Utils::Logger::Init();
@@ -71,4 +72,6 @@ void Application::render() {
 void Application::update(float deltaTime) {
   m_Input.Process(deltaTime);
   m_Scene->Update(&m_Input);
+
+  Eng::Events::Dispatcher::ClearEvents();
 }

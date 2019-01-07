@@ -5,6 +5,7 @@ using namespace Eng;
 using namespace Events;
 
 std::map<std::string, std::vector<std::function<void(SharedEvent event)>>> Dispatcher::m_Handlers;
+std::vector<SharedEvent> Dispatcher::m_Events;
 
 void Dispatcher::AddEventListener(std::string eventName, std::function<void(SharedEvent event)> fn) {
   m_Handlers[eventName].push_back(fn);
@@ -29,4 +30,10 @@ void Dispatcher::Emit(std::string eventName, SharedEvent event) {
     event->SetName(eventName);
     handler(event);
   }
+
+  Dispatcher::m_Events.push_back(event);
+}
+
+void Dispatcher::ClearEvents() {
+  m_Events.clear();
 }
