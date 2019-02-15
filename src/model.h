@@ -9,7 +9,7 @@
 class Model {
   public:
     Model();
-    Model(const std::string pathToFile);
+    Model(const std::string &pathToFile);
     ~Model();
 
   private:

@@ -4,6 +4,7 @@
 #include "api/index_buffer.h"
 #include "shader.h"
 #include "api/rendering_context.h"
+#include "../mesh.h"
 
 namespace Graphic {
   class Renderer {
@@ -14,9 +15,9 @@ namespace Graphic {
 
     public:
       virtual ~Renderer() = default;
+      virtual void Clear() const = 0;
 
-      virtual void clear() const = 0;
-      virtual void draw(const VertexArray *vao, const IndexBuffer *ibo, const Shader &sh) = 0;
+      virtual void DrawMesh(const Mesh *mesh, Shader *sh) = 0;
 
       static Renderer* Create(RenderingAPI api);
   };

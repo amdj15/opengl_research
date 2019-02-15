@@ -1,6 +1,6 @@
 #include "common.h"
 #include "shader.h"
-#include <iostream>
+#include "../../utils/logger.h"
 
 using namespace Devices;
 using namespace OpenGL;
@@ -63,8 +63,9 @@ unsigned int Shader::compile(const std::string &source, unsigned int type) {
     std::string textType = (type == GL_VERTEX_SHADER) ? "vertex" : "fragment";
     GLCall(glGetShaderInfoLog(m_RendererId, logLength, &logLength, message));
 
-    std::cout << "Failed to compile " << textType << std::endl;
-    std::cout << message << std::endl;
+    LOG_ERROR("Failed to compile {}", textType);
+    LOG_ERROR(message);
+
     throw std::runtime_error("Failed to compile shader");
   }
 

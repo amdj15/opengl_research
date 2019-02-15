@@ -1,6 +1,7 @@
-#include <iostream>
+#include <stdexcept>
 #include "common.h"
 #include "context.h"
+#include "../../utils/logger.h"
 
 using namespace Devices;
 
@@ -9,10 +10,10 @@ GLContext::GLContext() {
     throw std::runtime_error("Cannot initialize glew for OpenGL");
   }
 
-  std::cout << "OpenGL version: " << glGetString(GL_VERSION) << std::endl;
-  std::cout << "GLSL version: " << glGetString(GL_SHADING_LANGUAGE_VERSION) << std::endl;
-  std::cout << "Vendor: " << glGetString(GL_VENDOR) << std::endl;
-  std::cout << "Renderer: " << glGetString(GL_RENDERER) << std::endl;
+  LOG_DEBUG("OpenGL version: {0}", glGetString(GL_VERSION));
+  LOG_DEBUG("GLSL version: {0}", glGetString(GL_SHADING_LANGUAGE_VERSION));
+  LOG_DEBUG("Vendor: {0}", glGetString(GL_VENDOR));
+  LOG_DEBUG("Renderer: {0}", glGetString(GL_RENDERER));
 
   GLCall(glEnable(GL_CULL_FACE));
   GLCall(glCullFace(GL_BACK));

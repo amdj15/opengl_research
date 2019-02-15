@@ -1,5 +1,5 @@
 #include "mesh.h"
-#include <iostream>
+#include "utils/logger.h"
 
 Mesh::Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std::map<std::string, MeshTexture> textures):
   m_Vertices(vertices),
@@ -14,7 +14,7 @@ Mesh::Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std:
 
 Mesh::~Mesh() {
   for (std::map<std::string, Graphic::Texture*>::iterator it = m_Textures.begin(); it != m_Textures.end(); it++) {
-    std::cout << "Delete texture " << it->second->GetRendererId() << std::endl;
+    LOG_DEBUG("Delete texture {}", it->second->GetRendererId());
     delete it->second;
   }
 
