@@ -5,16 +5,14 @@
 
 static void initScene(Eng::Scene *scene) {
   ShGameObject chel = std::make_shared<Eng::GameObject>("chel.Obj", "shaders/simple.glsl");
-  ShGameObject lamp = std::make_shared<Eng::GameObject>("sphere.obj", "shaders/light_source.glsl");
-  ShGameObject bunny = std::make_shared<Eng::GameObject>("bunny.obj", "shaders/simple.glsl");
-  ShGameObject drag = std::make_shared<Eng::GameObject>("dragon.obj", "shaders/simple.glsl");
+  ShGameObject muroChel = std::make_shared<Eng::GameObject>("Old_Man/muro.obj", "shaders/model.glsl");
+  ShGameObject home = std::make_shared<Eng::GameObject>("house_2/WoodenCabinObj.obj", "shaders/model.glsl");
 
   scene->AddGameObject(chel);
-  scene->AddGameObject(lamp);
-  scene->AddGameObject(bunny);
-  scene->AddGameObject(drag);
+  scene->AddGameObject(muroChel);
+  scene->AddGameObject(home);
 
-  Eng::ECS::MovementSystem::SubscribeEntityToMoveByArrows(chel->GetEntity()->GetId());
+  Eng::ECS::MovementSystem::SubscribeEntityToMoveByArrows(muroChel->GetEntity()->GetId());
 }
 
 int main()

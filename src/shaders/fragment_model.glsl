@@ -22,6 +22,30 @@ uniform sampler2D texture_normal;
 
 uniform Material material;
 
+vec3 _colorDetector(float red, float green, float blue);
+vec3 diffusedColor();
+vec3 lightColor();
+
+vec3 diffusedColor() {
+  return _colorDetector(
+    texture(texture_diffuse, v_TexCoords).r,
+    texture(texture_diffuse, v_TexCoords).g,
+    texture(texture_diffuse, v_TexCoords).b
+  );
+}
+
+vec3 lightColor() {
+  return _colorDetector(u_LightColor.r, u_LightColor.g, u_LightColor.b);
+}
+
+vec3 _colorDetector(float red, float green, float blue) {
+  if (red > 0 || green > 0 || blue > 0) {
+    return vec3(red, green, blue);
+  }
+
+  return vec3(1.0f, 1.0f, 1.0f);
+}
+
 void main()
 {
   vec3 unitNormal = texture(texture_normal, v_TexCoords).rgb;
@@ -29,14 +53,13 @@ void main()
 
   // ambient light
   float ambientStength = 0.1f;
-  vec3 ambientLight = u_LightColor * ambientStength * texture(texture_diffuse, v_TexCoords).rgb;
+  vec3 ambientLight = lightColor() * ambientStength * diffusedColor();
 
   // diffused light
   vec3 unitLightVector = normalize(ts.toLightVector);
   float dotProduct = dot(unitNormal, unitLightVector);
   float brightness = max(dotProduct, 0.0f);
-
-  vec3 diffuseLight = brightness * u_LightColor * texture(texture_diffuse, v_TexCoords).rgb;
+  vec3 diffuseLight = brightness * lightColor() * diffusedColor();
 
   // specular ligth
   float damperFactor = 0.0f;

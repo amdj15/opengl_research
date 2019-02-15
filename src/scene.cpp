@@ -41,7 +41,7 @@ void Scene::Render(Graphic::Renderer *renderer) {
     Graphic::Shader *shader = gameObject->GetShader();
 
     for(Mesh *mesh : model->getMeshes()) {
-      renderer->Draw(mesh->GetVao(), mesh->GetIbo(), shader);
+      renderer->DrawMesh(mesh, shader);
     }
   }
 }

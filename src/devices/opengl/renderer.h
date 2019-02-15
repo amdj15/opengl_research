@@ -10,7 +10,11 @@ namespace Devices {
         ~Renderer();
 
         void Clear() const override;
-        void Draw(const Graphic::VertexArray *vao, const Graphic::IndexBuffer *ibo, const Graphic::Shader *sh) override;
+        void DrawMesh(const Mesh *mesh, Graphic::Shader *sh) override;
+
+      private:
+        void bindElements(const Graphic::VertexArray *vao, const Graphic::IndexBuffer *ibo, Graphic::Shader *sh);
+        void setTextures(const Mesh *mesh, Graphic::Shader *sh);
     };
   }
 }
